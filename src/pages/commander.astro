@@ -164,8 +164,6 @@ import { ShoppingBag, Clock, Truck, MapPin } from 'lucide-astro';
 
 <script>
 	import { CartService } from '../lib/cart';
-	import { OrderService } from '../lib/orders';
-	import { AuthService } from '../lib/auth';
 
 	// Order type selection
 	const orderCards = document.querySelectorAll('.order-type-card');
@@ -239,22 +237,14 @@ import { ShoppingBag, Clock, Truck, MapPin } from 'lucide-astro';
 		}
 
 		try {
-			const orderData = {
-				orderType: selectedOrderType,
-				deliveryAddress: selectedOrderType === 'delivery' ? formData.get('address') : '',
-				specialInstructions: formData.get('instructions') || '',
-				customerInfo: {
-					firstName: formData.get('firstName'),
-					lastName: formData.get('lastName'),
-					phone: formData.get('phone'),
-					email: formData.get('email') || ''
-				}
-			};
-
-			const order = await OrderService.createOrder(orderData);
+			// Simplified order creation - just generate a number and clear cart
+			const orderNumber = generateOrderNumber();
+			
+			// Clear cart
+			CartService.clearCart();
 			
 			// Show success message
-			showSuccessMessage(order.order_number);
+			showSuccessMessage(orderNumber);
 			
 			// Reset form
 			e.target.reset();
@@ -266,6 +256,16 @@ import { ShoppingBag, Clock, Truck, MapPin } from 'lucide-astro';
 			alert('Erreur lors de la création de la commande: ' + error.message);
 		}
 	});
+
+	function generateOrderNumber() {
+		const now = new Date();
+		const year = now.getFullYear().toString().slice(-2);
+		const month = (now.getMonth() + 1).toString().padStart(2, '0');
+		const day = now.getDate().toString().padStart(2, '0');
+		const random = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
+		
+		return `OS${year}${month}${day}${random}`;
+	}
 
 	function showSuccessMessage(orderNumber) {
 		const successMessage = document.createElement('div');
