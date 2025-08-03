@@ -1,0 +1,272 @@
+---
+import { X, Plus, Minus } from 'lucide-astro';
+---
+
+<div id="product-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+  <div class="bg-dark-900 rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+    <div class="relative">
+      <button id="close-product-modal" class="absolute top-4 right-4 z-10 p-2 bg-black/50 hover:bg-black/70 rounded-full transition-colors">
+        <X size={20} class="text-white" />
+      </button>
+      
+      <div id="product-modal-content">
+        <!-- Content will be populated by JavaScript -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  import { CartService } from '../../lib/cart';
+  import { ProductService } from '../../lib/products';
+
+  const modal = document.getElementById('product-modal');
+  const closeBtn = document.getElementById('close-product-modal');
+  const modalContent = document.getElementById('product-modal-content');
+
+  let currentProduct = null;
+  let selectedVariant = null;
+  let quantity = 1;
+
+  function closeModal() {
+    modal?.classList.add('hidden');
+    modal?.classList.remove('flex');
+    currentProduct = null;
+    selectedVariant = null;
+    quantity = 1;
+  }
+
+  async function openProductModal(productId) {
+    try {
+      const product = await ProductService.getProduct(productId);
+      currentProduct = product;
+      selectedVariant = product.variants.find(v => v.is_default) || product.variants[0] || null;
+      
+      renderProductModal(product);
+      
+      modal?.classList.remove('hidden');
+      modal?.classList.add('flex');
+    } catch (error) {
+      console.error('Error loading product:', error);
+      alert('Erreur lors du chargement du produit');
+    }
+  }
+
+  function renderProductModal(product) {
+    if (!modalContent) return;
+
+    const currentPrice = selectedVariant 
+      ? product.base_price + selectedVariant.price_modifier 
+      : product.base_price;
+
+    modalContent.innerHTML = `
+      <div class="aspect-video overflow-hidden rounded-t-2xl">
+        <img src="${product.image_url}" alt="${product.name}" class="w-full h-full object-cover">
+      </div>
+      
+      <div class="p-8">
+        <div class="flex items-start justify-between mb-4">
+          <div>
+            <h2 class="text-2xl font-bold text-white mb-2">${product.name}</h2>
+            <p class="text-white/70 leading-relaxed">${product.description}</p>
+          </div>
+          ${product.is_popular ? '<div class="bg-primary-600 text-white px-3 py-1 rounded-full text-sm font-medium">Populaire</div>' : ''}
+        </div>
+
+        ${product.allergens && product.allergens.length > 0 ? `
+          <div class="mb-6">
+            <h4 class="text-sm font-medium text-white/80 mb-2">Allergènes:</h4>
+            <div class="flex flex-wrap gap-2">
+              ${product.allergens.map(allergen => `
+                <span class="px-2 py-1 bg-yellow-600/20 text-yellow-400 text-xs rounded-full">${allergen}</span>
+              `).join('')}
+            </div>
+          </div>
+        ` : ''}
+
+        ${product.variants && product.variants.length > 0 ? `
+          <div class="mb-6">
+            <h4 class="text-sm font-medium text-white/80 mb-3">Options:</h4>
+            <div class="grid grid-cols-1 gap-2">
+              ${product.variants.map(variant => `
+                <label class="variant-option flex items-center justify-between p-3 bg-white/5 rounded-xl border border-white/10 cursor-pointer hover:bg-white/10 transition-colors ${selectedVariant?.id === variant.id ? 'border-primary-600 bg-primary-600/10' : ''}">
+                  <div class="flex items-center">
+                    <input type="radio" name="variant" value="${variant.id}" class="sr-only" ${selectedVariant?.id === variant.id ? 'checked' : ''}>
+                    <div class="flex items-center">
+                      <div class="w-4 h-4 border-2 border-white/30 rounded-full mr-3 flex items-center justify-center ${selectedVariant?.id === variant.id ? 'border-primary-600' : ''}">
+                        ${selectedVariant?.id === variant.id ? '<div class="w-2 h-2 bg-primary-600 rounded-full"></div>' : ''}
+                      </div>
+                      <span class="text-white">${variant.name}</span>
+                    </div>
+                  </div>
+                  <span class="text-primary-500 font-semibold">
+                    ${variant.price_modifier > 0 ? '+' : ''}${variant.price_modifier.toFixed(2)}€
+                  </span>
+                </label>
+              `).join('')}
+            </div>
+          </div>
+        ` : ''}
+
+        <div class="mb-6">
+          <label class="block text-sm font-medium text-white/80 mb-2">Instructions spéciales (optionnel)</label>
+          <textarea id="special-instructions" class="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-xl text-white placeholder-white/50 focus:outline-none focus:border-primary-600 resize-none h-20" placeholder="Allergies, préférences de cuisson..."></textarea>
+        </div>
+
+        <div class="flex items-center justify-between">
+          <div class="flex items-center space-x-4">
+            <span class="text-white/70">Quantité:</span>
+            <div class="flex items-center space-x-2">
+              <button id="decrease-quantity" class="quantity-btn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+              </button>
+              <span id="quantity-display" class="w-8 text-center text-white font-semibold">${quantity}</span>
+              <button id="increase-quantity" class="quantity-btn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="12" y1="5" x2="12" y2="19"></line>
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+              </button>
+            </div>
+          </div>
+          
+          <div class="text-right">
+            <div class="text-2xl font-bold text-primary-500" id="total-price">${(currentPrice * quantity).toFixed(2)}€</div>
+            <div class="text-sm text-white/60">Prix unitaire: ${currentPrice.toFixed(2)}€</div>
+          </div>
+        </div>
+
+        <button id="add-to-cart-modal" class="w-full mt-6 py-4 bg-gradient-to-r from-primary-600 to-primary-700 text-white font-semibold rounded-xl hover:scale-105 transition-transform flex items-center justify-center space-x-2">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+          <span>Ajouter au panier</span>
+        </button>
+      </div>
+    `;
+
+    // Add event listeners
+    setupModalEventListeners();
+  }
+
+  function setupModalEventListeners() {
+    // Variant selection
+    document.querySelectorAll('input[name="variant"]').forEach(input => {
+      input.addEventListener('change', (e) => {
+        const variantId = e.target.value;
+        selectedVariant = currentProduct.variants.find(v => v.id === variantId);
+        updatePrice();
+        
+        // Update visual selection
+        document.querySelectorAll('.variant-option').forEach(option => {
+          option.classList.remove('border-primary-600', 'bg-primary-600/10');
+          option.classList.add('border-white/10');
+          const radio = option.querySelector('.w-4.h-4 div');
+          if (radio) radio.remove();
+        });
+        
+        const selectedOption = e.target.closest('.variant-option');
+        selectedOption.classList.add('border-primary-600', 'bg-primary-600/10');
+        selectedOption.classList.remove('border-white/10');
+        const radioIndicator = selectedOption.querySelector('.w-4.h-4');
+        radioIndicator.innerHTML = '<div class="w-2 h-2 bg-primary-600 rounded-full"></div>';
+      });
+    });
+
+    // Quantity controls
+    document.getElementById('decrease-quantity')?.addEventListener('click', () => {
+      if (quantity > 1) {
+        quantity--;
+        updateQuantityDisplay();
+        updatePrice();
+      }
+    });
+
+    document.getElementById('increase-quantity')?.addEventListener('click', () => {
+      quantity++;
+      updateQuantityDisplay();
+      updatePrice();
+    });
+
+    // Add to cart
+    document.getElementById('add-to-cart-modal')?.addEventListener('click', () => {
+      if (!currentProduct) return;
+
+      const specialInstructions = document.getElementById('special-instructions')?.value || '';
+      
+      CartService.addItem(
+        currentProduct,
+        selectedVariant?.id,
+        quantity,
+        specialInstructions
+      );
+
+      // Show success feedback
+      showAddToCartFeedback(currentProduct.name, quantity);
+      closeModal();
+    });
+  }
+
+  function updateQuantityDisplay() {
+    const quantityDisplay = document.getElementById('quantity-display');
+    if (quantityDisplay) {
+      quantityDisplay.textContent = quantity.toString();
+    }
+  }
+
+  function updatePrice() {
+    if (!currentProduct) return;
+
+    const currentPrice = selectedVariant 
+      ? currentProduct.base_price + selectedVariant.price_modifier 
+      : currentProduct.base_price;
+
+    const totalPriceElement = document.getElementById('total-price');
+    if (totalPriceElement) {
+      totalPriceElement.textContent = `${(currentPrice * quantity).toFixed(2)}€`;
+    }
+  }
+
+  function showAddToCartFeedback(productName, quantity) {
+    const feedback = document.createElement('div');
+    feedback.className = 'fixed top-20 right-4 bg-primary-600 text-white px-6 py-3 rounded-xl shadow-lg z-50 transition-all duration-300 transform translate-x-0';
+    feedback.innerHTML = `
+      <div class="flex items-center space-x-2">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="20,6 9,17 4,12"></polyline>
+        </svg>
+        <span>${quantity}x ${productName} ajouté${quantity > 1 ? 's' : ''} au panier</span>
+      </div>
+    `;
+    
+    document.body.appendChild(feedback);
+    
+    setTimeout(() => {
+      feedback.style.transform = 'translateX(100%)';
+      feedback.style.opacity = '0';
+    }, 3000);
+    
+    setTimeout(() => {
+      document.body.removeChild(feedback);
+    }, 3500);
+  }
+
+  // Event listeners
+  closeBtn?.addEventListener('click', closeModal);
+  modal?.addEventListener('click', (e) => {
+    if (e.target === modal) closeModal();
+  });
+
+  // Global function to open product modal
+  (window as any).openProductModal = openProductModal;
+</script>
+
+<style>
+  .quantity-btn {
+    @apply w-10 h-10 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center text-white transition-colors;
+  }
+</style>
+</div>

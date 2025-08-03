@@ -1,0 +1,69 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import MenuCard from '../components/MenuCard.astro';
+import Footer from '../components/Footer.astro';
+
+const categories = [
+	{ name: 'Sashimi', items: [
+		{ id: 1, name: "Sashimi Saumon", description: "6 tranches de saumon frais", price: 12.90, image: "https://images.pexels.com/photos/357756/pexels-photo-357756.jpeg", category: "sashimi", popular: true },
+		{ id: 2, name: "Sashimi Thon", description: "6 tranches de thon rouge", price: 14.90, image: "https://images.pexels.com/photos/2323398/pexels-photo-2323398.jpeg", category: "sashimi", popular: false },
+		{ id: 3, name: "Sashimi Mixte", description: "Assortiment saumon, thon, dorade", price: 16.90, image: "https://images.pexels.com/photos/357756/pexels-photo-357756.jpeg", category: "sashimi", popular: true }
+	]},
+	{ name: 'Nigiri', items: [
+		{ id: 4, name: "Nigiri Saumon", description: "Riz vinaigré surmonté de saumon", price: 3.80, image: "https://images.pexels.com/photos/2323398/pexels-photo-2323398.jpeg", category: "nigiri", popular: false },
+		{ id: 5, name: "Nigiri Thon", description: "Riz vinaigré surmonté de thon", price: 4.20, image: "https://images.pexels.com/photos/357756/pexels-photo-357756.jpeg", category: "nigiri", popular: true },
+		{ id: 6, name: "Nigiri Crevette", description: "Riz vinaigré surmonté de crevette", price: 3.50, image: "https://images.pexels.com/photos/2323398/pexels-photo-2323398.jpeg", category: "nigiri", popular: false }
+	]},
+	{ name: 'Maki', items: [
+		{ id: 7, name: "Maki California", description: "Avocat, concombre, surimi", price: 8.50, image: "https://images.pexels.com/photos/2098085/pexels-photo-2098085.jpeg", category: "maki", popular: true },
+		{ id: 8, name: "Maki Saumon", description: "6 pièces au saumon frais", price: 7.90, image: "https://images.pexels.com/photos/2098085/pexels-photo-2098085.jpeg", category: "maki", popular: false },
+		{ id: 9, name: "Maki Avocat", description: "6 pièces à l'avocat", price: 6.50, image: "https://images.pexels.com/photos/2098085/pexels-photo-2098085.jpeg", category: "maki", popular: false }
+	]},
+	{ name: 'Bento', items: [
+		{ id: 10, name: "Bento Saumon", description: "Sushis saumon, salade, riz", price: 16.90, image: "https://images.pexels.com/photos/884600/pexels-photo-884600.jpeg", category: "bento", popular: true },
+		{ id: 11, name: "Bento Mixte", description: "Assortiment varié complet", price: 18.90, image: "https://images.pexels.com/photos/884600/pexels-photo-884600.jpeg", category: "bento", popular: true },
+		{ id: 12, name: "Bento Végétarien", description: "Makis légumes, tofu, salade", price: 14.90, image: "https://images.pexels.com/photos/884600/pexels-photo-884600.jpeg", category: "bento", popular: false }
+	]}
+];
+---
+
+<Layout>
+	<Header />
+	<main class="pt-16">
+		<!-- Hero Section -->
+		<section class="relative py-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
+			<div class="absolute inset-0 bg-gradient-to-br from-dark-950 via-dark-900 to-primary-950"></div>
+			<div class="absolute inset-0 bg-[url('https://images.pexels.com/photos/357756/pexels-photo-357756.jpeg')] bg-cover bg-center opacity-10"></div>
+			
+			<div class="relative z-10 max-w-4xl mx-auto text-center">
+				<h1 class="text-5xl sm:text-6xl font-bold mb-6 bg-gradient-to-r from-white to-primary-500 bg-clip-text text-transparent">
+					Notre Menu
+				</h1>
+				<p class="text-xl text-white/70 max-w-2xl mx-auto">
+					Découvrez notre sélection de sushis authentiques, préparés avec passion par nos maîtres sushi
+				</p>
+			</div>
+		</section>
+		
+		<!-- Menu Categories -->
+		{categories.map((category, categoryIndex) => (
+			<section class="py-16 px-4 sm:px-6 lg:px-8">
+				<div class="max-w-7xl mx-auto">
+					<h2 class="text-3xl sm:text-4xl font-bold mb-12 text-center text-white scroll-reveal">
+						{category.name}
+					</h2>
+					
+					<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+						{category.items.map((item, index) => (
+							<div class="scroll-reveal" style={`animation-delay: ${(categoryIndex * 0.2) + (index * 0.1)}s`}>
+								<MenuCard {...item} />
+							</div>
+						))}
+					</div>
+				</div>
+			</section>
+		))}
+	</main>
+	<Footer />
+</Layout>

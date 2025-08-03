@@ -1,0 +1,276 @@
+---
+import { Menu, X, ShoppingBag, User } from 'lucide-astro';
+---
+
+<header class="fixed top-0 left-0 right-0 z-40 transition-all duration-300" id="header">
+	<nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+		<div class="flex justify-between items-center h-16">
+			<!-- Logo -->
+			<div class="flex-shrink-0">
+				<a href="/" class="text-2xl font-bold text-primary-600 hover:text-primary-500 transition-colors">
+					<span class="text-3xl">🍣</span> Osushi
+				</a>
+			</div>
+			
+			<!-- Desktop Navigation -->
+			<div class="hidden md:block">
+				<div class="ml-10 flex items-baseline space-x-8">
+					<a href="/" class="nav-link">Accueil</a>
+					<a href="/menu" class="nav-link">Menu</a>
+					<a href="/commander" class="nav-link">Commander</a>
+					<a href="/fidelite" class="nav-link">Fidélité</a>
+					<a href="/a-propos" class="nav-link">À propos</a>
+					<a href="/contact" class="nav-link">Contact</a>
+				</div>
+			</div>
+			
+			<!-- Actions -->
+			<div class="hidden md:flex items-center space-x-4">
+				<button class="p-2 rounded-full hover:bg-white/10 transition-colors relative">
+					<ShoppingBag size={20} />
+					<span class="absolute -top-1 -right-1 bg-primary-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center" id="cart-count">0</span>
+				</button>
+				<button id="user-menu-btn" class="p-2 rounded-full hover:bg-white/10 transition-colors">
+					<User size={20} />
+				</button>
+				<button id="theme-toggle" class="p-2 rounded-full hover:bg-white/10 transition-colors">
+					🌙
+				</button>
+			</div>
+			
+			<!-- Mobile menu button -->
+			<div class="md:hidden">
+				<button class="mobile-menu-button p-2 rounded-md hover:bg-white/10 transition-colors">
+					<Menu size={24} />
+				</button>
+			</div>
+		</div>
+	</nav>
+	
+	<!-- Mobile menu -->
+	<div class="mobile-menu hidden md:hidden absolute top-full left-0 right-0 bg-dark-900/95 backdrop-blur-lg border-t border-white/10">
+		<div class="px-4 py-6 space-y-4">
+			<a href="/" class="block py-2 text-lg hover:text-primary-600 transition-colors">Accueil</a>
+			<a href="/menu" class="block py-2 text-lg hover:text-primary-600 transition-colors">Menu</a>
+			<a href="/commander" class="block py-2 text-lg hover:text-primary-600 transition-colors">Commander</a>
+			<a href="/fidelite" class="block py-2 text-lg hover:text-primary-600 transition-colors">Fidélité</a>
+			<a href="/a-propos" class="block py-2 text-lg hover:text-primary-600 transition-colors">À propos</a>
+			<a href="/contact" class="block py-2 text-lg hover:text-primary-600 transition-colors">Contact</a>
+			<div class="flex items-center space-x-4 pt-4 border-t border-white/10">
+				<button class="p-2 rounded-full hover:bg-white/10 transition-colors relative">
+					<ShoppingBag size={20} />
+					<span class="absolute -top-1 -right-1 bg-primary-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">0</span>
+				</button>
+				<button id="mobile-user-menu-btn" class="p-2 rounded-full hover:bg-white/10 transition-colors">
+					<User size={20} />
+				</button>
+			</div>
+		</div>
+	</div>
+	
+	<!-- User Menu Dropdown -->
+	<div id="user-menu" class="absolute top-full right-4 mt-2 w-64 bg-dark-900/95 backdrop-blur-lg rounded-2xl border border-white/10 shadow-2xl hidden z-50">
+		<div id="user-menu-authenticated" class="p-4 hidden">
+			<div class="flex items-center space-x-3 mb-4 pb-4 border-b border-white/10">
+				<div class="w-10 h-10 bg-primary-600 rounded-full flex items-center justify-center">
+					<User size={20} class="text-white" />
+				</div>
+				<div>
+					<p id="user-name" class="font-semibold text-white">Utilisateur</p>
+					<p id="user-email" class="text-sm text-white/60">email@example.com</p>
+				</div>
+			</div>
+			
+			<div class="space-y-2">
+				<a href="/profile" class="flex items-center space-x-3 px-3 py-2 rounded-xl hover:bg-white/10 transition-colors text-white/80 hover:text-white">
+					<User size={16} />
+					<span>Mon profil</span>
+				</a>
+				<a href="/mes-commandes" class="flex items-center space-x-3 px-3 py-2 rounded-xl hover:bg-white/10 transition-colors text-white/80 hover:text-white">
+					<ShoppingBag size={16} />
+					<span>Mes commandes</span>
+				</a>
+				<a href="/fidelite" class="flex items-center space-x-3 px-3 py-2 rounded-xl hover:bg-white/10 transition-colors text-white/80 hover:text-white">
+					<span class="text-yellow-500">⭐</span>
+					<span>Fidélité</span>
+				</a>
+				<button id="logout-btn" class="w-full flex items-center space-x-3 px-3 py-2 rounded-xl hover:bg-red-600/20 transition-colors text-red-400 hover:text-red-300">
+					<span>🚪</span>
+					<span>Déconnexion</span>
+				</button>
+			</div>
+		</div>
+		
+		<div id="user-menu-guest" class="p-4">
+			<p class="text-white/70 mb-4">Connectez-vous pour accéder à votre compte</p>
+			<button id="login-btn" class="w-full py-2 bg-gradient-to-r from-primary-600 to-primary-700 text-white font-semibold rounded-xl hover:scale-105 transition-transform">
+				Se connecter
+			</button>
+		</div>
+	</div>
+</header>
+
+<style>
+	.nav-link {
+		@apply text-white/80 hover:text-white font-medium transition-all duration-200 relative;
+	}
+	
+	.nav-link::after {
+		content: '';
+		position: absolute;
+		bottom: -4px;
+		left: 50%;
+		width: 0;
+		height: 2px;
+		background: linear-gradient(90deg, #dc2626, #ef4444);
+		transition: all 0.3s ease;
+		transform: translateX(-50%);
+	}
+	
+	.nav-link:hover::after {
+		width: 100%;
+	}
+	
+	#header {
+		background: rgba(10, 10, 10, 0.1);
+		backdrop-filter: blur(20px);
+	}
+	
+	#header.scrolled {
+		background: rgba(10, 10, 10, 0.95);
+		box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+	}
+</style>
+
+<script>
+	import { AuthService } from '../lib/auth';
+	import { CartService } from '../lib/cart';
+
+	// Header scroll effect
+	const header = document.getElementById('header');
+	let lastScrollY = window.scrollY;
+	
+	window.addEventListener('scroll', () => {
+		const currentScrollY = window.scrollY;
+		
+		if (currentScrollY > 50) {
+			header.classList.add('scrolled');
+		} else {
+			header.classList.remove('scrolled');
+		}
+		
+		lastScrollY = currentScrollY;
+	});
+	
+	// Mobile menu toggle
+	const mobileMenuButton = document.querySelector('.mobile-menu-button');
+	const mobileMenu = document.querySelector('.mobile-menu');
+	
+	mobileMenuButton?.addEventListener('click', () => {
+		mobileMenu?.classList.toggle('hidden');
+	});
+	
+	// Theme toggle
+	const themeToggle = document.getElementById('theme-toggle');
+	
+	themeToggle?.addEventListener('click', () => {
+		document.documentElement.classList.toggle('dark');
+		themeToggle.textContent = document.documentElement.classList.contains('dark') ? '🌙' : '☀️';
+	});
+	
+	// User menu functionality
+	const userMenuBtn = document.getElementById('user-menu-btn');
+	const mobileUserMenuBtn = document.getElementById('mobile-user-menu-btn');
+	const userMenu = document.getElementById('user-menu');
+	const userMenuAuthenticated = document.getElementById('user-menu-authenticated');
+	const userMenuGuest = document.getElementById('user-menu-guest');
+	const loginBtn = document.getElementById('login-btn');
+	const logoutBtn = document.getElementById('logout-btn');
+
+	// Toggle user menu
+	function toggleUserMenu() {
+		userMenu?.classList.toggle('hidden');
+	}
+
+	userMenuBtn?.addEventListener('click', toggleUserMenu);
+	mobileUserMenuBtn?.addEventListener('click', toggleUserMenu);
+
+	// Close menu when clicking outside
+	document.addEventListener('click', (e) => {
+		if (!userMenu?.contains(e.target) && !userMenuBtn?.contains(e.target) && !mobileUserMenuBtn?.contains(e.target)) {
+			userMenu?.classList.add('hidden');
+		}
+	});
+
+	// Login button
+	loginBtn?.addEventListener('click', () => {
+		userMenu?.classList.add('hidden');
+		(window as any).showAuthModal?.();
+	});
+
+	// Logout button
+	logoutBtn?.addEventListener('click', async () => {
+		try {
+			await AuthService.signOut();
+			window.location.reload();
+		} catch (error) {
+			console.error('Logout error:', error);
+		}
+	});
+
+	// Update user menu based on auth state
+	async function updateUserMenu() {
+		try {
+			const user = await AuthService.getCurrentUser();
+			
+			if (user) {
+				const profile = await AuthService.getUserProfile(user.id);
+				
+				userMenuAuthenticated?.classList.remove('hidden');
+				userMenuGuest?.classList.add('hidden');
+				
+				const userName = document.getElementById('user-name');
+				const userEmail = document.getElementById('user-email');
+				
+				if (userName && profile) {
+					userName.textContent = `${profile.first_name} ${profile.last_name}`;
+				}
+				if (userEmail) {
+					userEmail.textContent = user.email || '';
+				}
+			} else {
+				userMenuAuthenticated?.classList.add('hidden');
+				userMenuGuest?.classList.remove('hidden');
+			}
+		} catch (error) {
+			console.error('Error updating user menu:', error);
+			userMenuAuthenticated?.classList.add('hidden');
+			userMenuGuest?.classList.remove('hidden');
+		}
+	}
+
+	// Update cart count
+	function updateCartCount() {
+		const count = CartService.getItemCount();
+		const cartCountElements = document.querySelectorAll('#cart-count');
+		cartCountElements.forEach(element => {
+			element.textContent = count.toString();
+		});
+	}
+
+	// Cart button functionality
+	document.querySelectorAll('button').forEach(btn => {
+		if (btn.querySelector('svg') && btn.textContent.includes('ShoppingBag')) {
+			btn.addEventListener('click', () => {
+				(window as any).openCart?.();
+			});
+		}
+	});
+
+	// Listen for cart updates
+	window.addEventListener('cartUpdated', updateCartCount);
+
+	// Initialize
+	updateUserMenu();
+	updateCartCount();
+</script>

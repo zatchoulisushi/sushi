@@ -1,0 +1,162 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import FidelityCard from '../components/FidelityCard.astro';
+import { Gift, Star, Crown, Zap } from 'lucide-astro';
+---
+
+<Layout>
+	<Header />
+	<main class="pt-16">
+		<!-- Hero Section -->
+		<section class="py-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+			<div class="absolute inset-0 bg-gradient-to-br from-dark-950 via-primary-950 to-dark-950"></div>
+			
+			<div class="relative z-10 max-w-4xl mx-auto text-center">
+				<h1 class="text-5xl sm:text-6xl font-bold mb-6 bg-gradient-to-r from-white to-primary-500 bg-clip-text text-transparent scroll-reveal">
+					Programme Fidélité
+				</h1>
+				<p class="text-xl text-white/70 max-w-2xl mx-auto scroll-reveal">
+					Plus vous commandez, plus vous gagnez. Débloquez des récompenses exclusives !
+				</p>
+			</div>
+		</section>
+		
+		<!-- User Card -->
+		<section class="py-16 px-4 sm:px-6 lg:px-8">
+			<div class="max-w-2xl mx-auto scroll-reveal">
+				<FidelityCard />
+			</div>
+		</section>
+		
+		<!-- Tiers -->
+		<section class="py-16 px-4 sm:px-6 lg:px-8">
+			<div class="max-w-6xl mx-auto">
+				<h2 class="text-3xl font-bold text-center mb-12 text-white scroll-reveal">
+					Niveaux de fidélité
+				</h2>
+				
+				<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+					<!-- Bronze -->
+					<div class="tier-card scroll-reveal">
+						<div class="tier-icon bg-amber-600">
+							<Star size={32} />
+						</div>
+						<h3 class="text-xl font-bold mb-2">Bronze</h3>
+						<p class="text-white/70 text-sm mb-4">0 - 499 points</p>
+						<ul class="space-y-2 text-sm">
+							<li class="flex items-center">
+								<span class="w-2 h-2 bg-amber-600 rounded-full mr-3"></span>
+								1 point = 1€ dépensé
+							</li>
+							<li class="flex items-center">
+								<span class="w-2 h-2 bg-amber-600 rounded-full mr-3"></span>
+								Réductions occasionnelles
+							</li>
+						</ul>
+					</div>
+					
+					<!-- Or (Current) -->
+					<div class="tier-card active scroll-reveal" style="animation-delay: 0.1s">
+						<div class="tier-icon bg-yellow-500">
+							<Crown size={32} />
+						</div>
+						<h3 class="text-xl font-bold mb-2">Or</h3>
+						<p class="text-white/70 text-sm mb-4">500 - 1,999 points</p>
+						<ul class="space-y-2 text-sm">
+							<li class="flex items-center">
+								<span class="w-2 h-2 bg-yellow-500 rounded-full mr-3"></span>
+								1.5 points = 1€ dépensé
+							</li>
+							<li class="flex items-center">
+								<span class="w-2 h-2 bg-yellow-500 rounded-full mr-3"></span>
+								Réductions privilégiées
+							</li>
+							<li class="flex items-center">
+								<span class="w-2 h-2 bg-yellow-500 rounded-full mr-3"></span>
+								Nouveautés en avant-première
+							</li>
+						</ul>
+					</div>
+					
+					<!-- Platine -->
+					<div class="tier-card scroll-reveal" style="animation-delay: 0.2s">
+						<div class="tier-icon bg-gray-400">
+							<Zap size={32} />
+						</div>
+						<h3 class="text-xl font-bold mb-2">Platine</h3>
+						<p class="text-white/70 text-sm mb-4">2,000+ points</p>
+						<ul class="space-y-2 text-sm">
+							<li class="flex items-center">
+								<span class="w-2 h-2 bg-gray-400 rounded-full mr-3"></span>
+								2 points = 1€ dépensé
+							</li>
+							<li class="flex items-center">
+								<span class="w-2 h-2 bg-gray-400 rounded-full mr-3"></span>
+								Livraison gratuite
+							</li>
+							<li class="flex items-center">
+								<span class="w-2 h-2 bg-gray-400 rounded-full mr-3"></span>
+								Invitations événements VIP
+							</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</section>
+		
+		<!-- Rewards -->
+		<section class="py-16 px-4 sm:px-6 lg:px-8">
+			<div class="max-w-6xl mx-auto">
+				<h2 class="text-3xl font-bold text-center mb-12 text-white scroll-reveal">
+					Récompenses disponibles
+				</h2>
+				
+				<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+					<div class="reward-card scroll-reveal">
+						<div class="reward-cost">100 pts</div>
+						<h3 class="text-lg font-semibold mb-2">Miso offert</h3>
+						<p class="text-white/70 text-sm">Soupe miso traditionnelle offerte</p>
+					</div>
+					
+					<div class="reward-card scroll-reveal" style="animation-delay: 0.1s">
+						<div class="reward-cost">250 pts</div>
+						<h3 class="text-lg font-semibold mb-2">10% de réduction</h3>
+						<p class="text-white/70 text-sm">Sur votre prochaine commande</p>
+					</div>
+					
+					<div class="reward-card scroll-reveal" style="animation-delay: 0.2s">
+						<div class="reward-cost">500 pts</div>
+						<h3 class="text-lg font-semibold mb-2">Menu découverte</h3>
+						<p class="text-white/70 text-sm">Menu complet offert (valeur 18€)</p>
+					</div>
+				</div>
+			</div>
+		</section>
+	</main>
+	<Footer />
+</Layout>
+
+<style>
+	.tier-card {
+		@apply p-8 bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 text-center transition-all duration-500 hover:scale-105;
+	}
+	
+	.tier-card.active {
+		@apply bg-primary-600/10 border-primary-600/30;
+		box-shadow: 0 0 30px rgba(220, 38, 38, 0.2);
+	}
+	
+	.tier-icon {
+		@apply w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 text-white;
+	}
+	
+	.reward-card {
+		@apply p-6 bg-white/5 backdrop-blur-sm rounded-xl border border-white/10 hover:bg-white/10 transition-all duration-300 hover:scale-105;
+	}
+	
+	.reward-cost {
+		@apply inline-block bg-primary-600 text-white px-3 py-1 rounded-full text-sm font-bold mb-4;
+	}
+</style>

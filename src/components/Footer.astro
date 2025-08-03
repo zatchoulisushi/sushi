@@ -1,0 +1,102 @@
+---
+import { Instagram, Facebook, Twitter, MapPin, Phone, Mail, Clock } from 'lucide-astro';
+---
+
+<footer class="bg-dark-900 border-t border-white/10 mt-20">
+	<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+		<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+			<!-- Logo & Description -->
+			<div class="lg:col-span-1">
+				<div class="flex items-center mb-4">
+					<span class="text-3xl mr-2">🍣</span>
+					<span class="text-2xl font-bold text-white">Osushi</span>
+				</div>
+				<p class="text-white/70 mb-6 leading-relaxed">
+					L'art culinaire japonais dans sa plus pure tradition. 
+					Découvrez une expérience gastronomique unique.
+				</p>
+				<div class="flex space-x-4">
+					<a href="#" class="social-icon">
+						<Instagram size={20} />
+					</a>
+					<a href="#" class="social-icon">
+						<Facebook size={20} />
+					</a>
+					<a href="#" class="social-icon">
+						<Twitter size={20} />
+					</a>
+				</div>
+			</div>
+			
+			<!-- Navigation rapide -->
+			<div>
+				<h3 class="text-lg font-semibold mb-4 text-white">Navigation</h3>
+				<ul class="space-y-3">
+					<li><a href="/" class="footer-link">Accueil</a></li>
+					<li><a href="/menu" class="footer-link">Menu</a></li>
+					<li><a href="/commander" class="footer-link">Commander</a></li>
+					<li><a href="/fidelite" class="footer-link">Programme Fidélité</a></li>
+					<li><a href="/a-propos" class="footer-link">À propos</a></li>
+					<li><a href="/contact" class="footer-link">Contact</a></li>
+				</ul>
+			</div>
+			
+			<!-- Contact -->
+			<div>
+				<h3 class="text-lg font-semibold mb-4 text-white">Contact</h3>
+				<ul class="space-y-3">
+					<li class="flex items-center">
+						<MapPin size={16} class="mr-3 text-primary-600" />
+						<span class="text-white/70">123 Rue de la Paix, 75001 Paris</span>
+					</li>
+					<li class="flex items-center">
+						<Phone size={16} class="mr-3 text-primary-600" />
+						<span class="text-white/70">01 23 45 67 89</span>
+					</li>
+					<li class="flex items-center">
+						<Mail size={16} class="mr-3 text-primary-600" />
+						<span class="text-white/70">contact@osushi.fr</span>
+					</li>
+				</ul>
+			</div>
+			
+			<!-- Horaires -->
+			<div>
+				<h3 class="text-lg font-semibold mb-4 text-white">Horaires</h3>
+				<div class="space-y-3">
+					<div class="flex items-center">
+						<Clock size={16} class="mr-3 text-primary-600" />
+						<div class="text-white/70">
+							<div>Lun - Ven: 11h30 - 14h30</div>
+							<div class="ml-6">18h30 - 22h30</div>
+						</div>
+					</div>
+					<div class="flex items-center">
+						<div class="w-4 mr-3"></div>
+						<div class="text-white/70">
+							<div>Sam - Dim: 18h30 - 23h00</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<div class="border-t border-white/10 mt-12 pt-8 text-center">
+			<p class="text-white/60">
+				© 2025 Osushi. Tous droits réservés. | 
+				<a href="#" class="hover:text-primary-600 transition-colors">Mentions légales</a> | 
+				<a href="#" class="hover:text-primary-600 transition-colors">Politique de confidentialité</a>
+			</p>
+		</div>
+	</div>
+</footer>
+
+<style>
+	.social-icon {
+		@apply w-10 h-10 bg-white/10 rounded-full flex items-center justify-center text-white/70 hover:bg-primary-600 hover:text-white transition-all duration-300 hover:scale-110;
+	}
+	
+	.footer-link {
+		@apply text-white/70 hover:text-primary-600 transition-colors duration-200;
+	}
+</style>

@@ -1,0 +1,237 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { ShoppingBag, Clock, Truck, MapPin } from 'lucide-astro';
+---
+
+<Layout>
+	<Header />
+	<main class="pt-16 min-h-screen">
+		<section class="py-20 px-4 sm:px-6 lg:px-8">
+			<div class="max-w-4xl mx-auto">
+				<div class="text-center mb-16 scroll-reveal">
+					<h1 class="text-5xl sm:text-6xl font-bold mb-6 bg-gradient-to-r from-white to-primary-500 bg-clip-text text-transparent">
+						Commander
+					</h1>
+					<p class="text-xl text-white/70">
+						Choisissez votre mode de retrait préféré
+					</p>
+				</div>
+				
+				<!-- Order Types -->
+				<div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+					<div class="order-type-card scroll-reveal" data-type="pickup">
+						<div class="order-icon">
+							<ShoppingBag size={32} />
+						</div>
+						<h3 class="text-xl font-semibold mb-3">À emporter</h3>
+						<p class="text-white/70 mb-4">Récupérez votre commande directement au restaurant</p>
+						<div class="flex items-center text-sm text-white/60">
+							<Clock size={16} class="mr-2" />
+							Prêt en 15-20 min
+						</div>
+					</div>
+					
+					<div class="order-type-card scroll-reveal" data-type="delivery" style="animation-delay: 0.1s">
+						<div class="order-icon">
+							<Truck size={32} />
+						</div>
+						<h3 class="text-xl font-semibold mb-3">Livraison</h3>
+						<p class="text-white/70 mb-4">Livraison à domicile dans un rayon de 5km</p>
+						<div class="flex items-center text-sm text-white/60">
+							<Clock size={16} class="mr-2" />
+							Livré en 30-45 min
+						</div>
+						<div class="text-sm text-primary-400 mt-2">Frais de livraison: 2.50€</div>
+					</div>
+					
+					<div class="order-type-card scroll-reveal" data-type="dine-in" style="animation-delay: 0.2s">
+						<div class="order-icon">
+							<MapPin size={32} />
+						</div>
+						<h3 class="text-xl font-semibold mb-3">Sur place</h3>
+						<p class="text-white/70 mb-4">Dégustez dans notre restaurant</p>
+						<div class="flex items-center text-sm text-white/60">
+							<Clock size={16} class="mr-2" />
+							Service immédiat
+						</div>
+					</div>
+				</div>
+				
+				<!-- Order Form -->
+				<div class="bg-white/5 backdrop-blur-sm rounded-2xl p-8 scroll-reveal">
+					<h2 class="text-2xl font-bold mb-8 text-white">Votre commande</h2>
+					
+					<!-- Selected Order Type Display -->
+					<div id="selected-type" class="mb-8 p-4 bg-primary-600/20 border border-primary-600/30 rounded-xl hidden">
+						<div class="flex items-center">
+							<div id="selected-icon" class="mr-3"></div>
+							<div>
+								<div id="selected-title" class="font-semibold text-white"></div>
+								<div id="selected-description" class="text-sm text-white/70"></div>
+							</div>
+						</div>
+					</div>
+					
+					<!-- Customer Info Form -->
+					<form id="order-form" class="space-y-6">
+						<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+							<div>
+								<label class="block text-sm font-medium text-white/80 mb-2">Nom *</label>
+								<input type="text" required class="form-input" placeholder="Votre nom">
+							</div>
+							<div>
+								<label class="block text-sm font-medium text-white/80 mb-2">Téléphone *</label>
+								<input type="tel" required class="form-input" placeholder="01 23 45 67 89">
+							</div>
+						</div>
+						
+						<div>
+							<label class="block text-sm font-medium text-white/80 mb-2">Email</label>
+							<input type="email" class="form-input" placeholder="votre@email.com">
+						</div>
+						
+						<!-- Address (for delivery) -->
+						<div id="delivery-address" class="hidden">
+							<label class="block text-sm font-medium text-white/80 mb-2">Adresse de livraison *</label>
+							<input type="text" class="form-input" placeholder="123 Rue de la Paix, 75001 Paris">
+						</div>
+						
+						<!-- Special instructions -->
+						<div>
+							<label class="block text-sm font-medium text-white/80 mb-2">Instructions spéciales</label>
+							<textarea class="form-input h-24 resize-none" placeholder="Allergies, préférences..."></textarea>
+						</div>
+						
+						<!-- Cart Summary -->
+						<div class="bg-white/5 rounded-xl p-6 border border-white/10">
+							<h3 class="text-lg font-semibold mb-4 text-white">Résumé de la commande</h3>
+							<div id="cart-items" class="space-y-3 mb-4">
+								<div class="text-white/60 text-center py-8">
+									Votre panier est vide. <a href="/menu" class="text-primary-500 hover:text-primary-400">Parcourir le menu</a>
+								</div>
+							</div>
+							<div class="border-t border-white/10 pt-4">
+								<div class="flex justify-between text-lg font-semibold text-white">
+									<span>Total</span>
+									<span id="cart-total">0.00€</span>
+								</div>
+							</div>
+						</div>
+						
+						<button type="submit" class="w-full btn-primary-large">
+							Confirmer la commande
+						</button>
+					</form>
+				</div>
+			</div>
+		</section>
+	</main>
+	<Footer />
+</Layout>
+
+<style>
+	.order-type-card {
+		@apply p-8 bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 text-center cursor-pointer transition-all duration-300 hover:scale-105 hover:bg-white/10;
+	}
+	
+	.order-type-card.active {
+		@apply bg-primary-600/20 border-primary-600/50;
+		box-shadow: 0 0 30px rgba(220, 38, 38, 0.2);
+	}
+	
+	.order-icon {
+		@apply w-16 h-16 bg-gradient-to-br from-primary-600 to-primary-700 rounded-2xl flex items-center justify-center mx-auto mb-4 text-white transition-transform duration-300;
+	}
+	
+	.order-type-card:hover .order-icon {
+		transform: translateY(-4px) scale(1.05);
+	}
+	
+	.form-input {
+		@apply w-full px-4 py-3 bg-white/5 border border-white/20 rounded-xl text-white placeholder-white/50 focus:outline-none focus:border-primary-600 focus:bg-white/10 transition-all duration-300;
+	}
+	
+	.btn-primary-large {
+		@apply px-8 py-4 bg-gradient-to-r from-primary-600 to-primary-700 text-white font-semibold rounded-xl hover:scale-105 hover:shadow-xl transition-all duration-300;
+	}
+	
+	.btn-primary-large:hover {
+		box-shadow: 0 10px 30px rgba(220, 38, 38, 0.3);
+	}
+</style>
+
+<script>
+	// Order type selection
+	const orderCards = document.querySelectorAll('.order-type-card');
+	const selectedType = document.getElementById('selected-type');
+	const selectedIcon = document.getElementById('selected-icon');
+	const selectedTitle = document.getElementById('selected-title');
+	const selectedDescription = document.getElementById('selected-description');
+	const deliveryAddress = document.getElementById('delivery-address');
+	
+	const orderTypes = {
+		pickup: {
+			title: 'À emporter',
+			description: 'Récupération au restaurant - Prêt en 15-20 min',
+			icon: '🛍️'
+		},
+		delivery: {
+			title: 'Livraison',
+			description: 'Livraison à domicile - 30-45 min (2.50€)',
+			icon: '🚚'
+		},
+		'dine-in': {
+			title: 'Sur place',
+			description: 'Service au restaurant - Immédiat',
+			icon: '🍽️'
+		}
+	};
+	
+	orderCards.forEach(card => {
+		card.addEventListener('click', () => {
+			// Remove active class from all cards
+			orderCards.forEach(c => c.classList.remove('active'));
+			// Add active class to clicked card
+			card.classList.add('active');
+			
+			const type = card.getAttribute('data-type');
+			const typeInfo = orderTypes[type];
+			
+			// Show selected type
+			selectedType.classList.remove('hidden');
+			selectedIcon.textContent = typeInfo.icon;
+			selectedTitle.textContent = typeInfo.title;
+			selectedDescription.textContent = typeInfo.description;
+			
+			// Show/hide delivery address
+			if (type === 'delivery') {
+				deliveryAddress.classList.remove('hidden');
+				deliveryAddress.querySelector('input').required = true;
+			} else {
+				deliveryAddress.classList.add('hidden');
+				deliveryAddress.querySelector('input').required = false;
+			}
+		});
+	});
+	
+	// Form submission
+	document.getElementById('order-form').addEventListener('submit', (e) => {
+		e.preventDefault();
+		
+		// Show success message
+		const successMessage = document.createElement('div');
+		successMessage.className = 'fixed inset-0 bg-dark-950/90 flex items-center justify-center z-50';
+		successMessage.innerHTML = `
+			<div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 text-center max-w-md mx-4">
+				<div class="text-6xl mb-4">✅</div>
+				<h3 class="text-2xl font-bold text-white mb-4">Commande confirmée !</h3>
+				<p class="text-white/70 mb-6">Nous vous contacterons dans quelques minutes pour confirmer votre commande.</p>
+				<button onclick="this.parentElement.parentElement.remove()" class="btn-primary">Fermer</button>
+			</div>
+		`;
+		
+		document.body.appendChild(successMessage);
+	});
+</script>

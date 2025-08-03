@@ -1,0 +1,187 @@
+---
+import { X, Plus, Minus, Trash2 } from 'lucide-astro';
+---
+
+<div id="cart-sidebar" class="fixed right-0 top-0 h-full w-96 bg-dark-900 border-l border-white/10 transform translate-x-full transition-transform duration-300 z-50 flex flex-col">
+  <div class="p-6 border-b border-white/10 flex items-center justify-between">
+    <h2 class="text-xl font-bold text-white">Votre panier</h2>
+    <button id="close-cart" class="p-2 hover:bg-white/10 rounded-full transition-colors">
+      <X size={20} class="text-white/70" />
+    </button>
+  </div>
+
+  <div class="flex-1 overflow-y-auto p-6">
+    <div id="cart-items-container">
+      <!-- Cart items will be populated by JavaScript -->
+    </div>
+  </div>
+
+  <div class="p-6 border-t border-white/10 bg-dark-950">
+    <div class="space-y-3 mb-6">
+      <div class="flex justify-between text-white/70">
+        <span>Sous-total</span>
+        <span id="cart-subtotal">0.00€</span>
+      </div>
+      <div class="flex justify-between text-white/70" id="delivery-fee-row" style="display: none;">
+        <span>Frais de livraison</span>
+        <span id="cart-delivery-fee">0.00€</span>
+      </div>
+      <div class="flex justify-between text-white/70" id="loyalty-discount-row" style="display: none;">
+        <span>Réduction fidélité</span>
+        <span id="cart-loyalty-discount">-0.00€</span>
+      </div>
+      <div class="flex justify-between text-lg font-bold text-white border-t border-white/10 pt-3">
+        <span>Total</span>
+        <span id="cart-total">0.00€</span>
+      </div>
+    </div>
+
+    <button id="checkout-btn" class="w-full py-3 bg-gradient-to-r from-primary-600 to-primary-700 text-white font-semibold rounded-xl hover:scale-105 transition-transform disabled:opacity-50 disabled:cursor-not-allowed">
+      Commander
+    </button>
+  </div>
+</div>
+
+<div id="cart-overlay" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 hidden"></div>
+
+<script>
+  import { CartService } from '../../lib/cart';
+
+  const cartSidebar = document.getElementById('cart-sidebar');
+  const cartOverlay = document.getElementById('cart-overlay');
+  const closeCartBtn = document.getElementById('close-cart');
+  const cartItemsContainer = document.getElementById('cart-items-container');
+  const cartSubtotal = document.getElementById('cart-subtotal');
+  const cartDeliveryFee = document.getElementById('cart-delivery-fee');
+  const cartLoyaltyDiscount = document.getElementById('cart-loyalty-discount');
+  const cartTotal = document.getElementById('cart-total');
+  const checkoutBtn = document.getElementById('checkout-btn');
+  const deliveryFeeRow = document.getElementById('delivery-fee-row');
+  const loyaltyDiscountRow = document.getElementById('loyalty-discount-row');
+
+  function openCart() {
+    cartSidebar?.classList.remove('translate-x-full');
+    cartOverlay?.classList.remove('hidden');
+    updateCartDisplay();
+  }
+
+  function closeCart() {
+    cartSidebar?.classList.add('translate-x-full');
+    cartOverlay?.classList.add('hidden');
+  }
+
+  function updateCartDisplay() {
+    const cart = CartService.getCart();
+    
+    if (!cartItemsContainer) return;
+
+    if (cart.items.length === 0) {
+      cartItemsContainer.innerHTML = `
+        <div class="text-center py-12 text-white/60">
+          <div class="text-4xl mb-4">🛒</div>
+          <p>Votre panier est vide</p>
+          <a href="/menu" class="text-primary-500 hover:text-primary-400 mt-2 inline-block">
+            Parcourir le menu
+          </a>
+        </div>
+      `;
+      checkoutBtn?.setAttribute('disabled', 'true');
+    } else {
+      cartItemsContainer.innerHTML = cart.items.map(item => `
+        <div class="cart-item flex items-center space-x-4 p-4 bg-white/5 rounded-xl mb-4">
+          <img src="${item.product.image_url}" alt="${item.product.name}" class="w-16 h-16 object-cover rounded-lg">
+          <div class="flex-1">
+            <h4 class="font-semibold text-white">${item.product.name}</h4>
+            ${item.variantId ? `<p class="text-sm text-white/60">Variant: ${item.variantId}</p>` : ''}
+            <p class="text-primary-500 font-bold">${item.unitPrice.toFixed(2)}€</p>
+          </div>
+          <div class="flex items-center space-x-2">
+            <button class="quantity-btn" data-action="decrease" data-item-id="${item.id}">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+            </button>
+            <span class="w-8 text-center text-white">${item.quantity}</span>
+            <button class="quantity-btn" data-action="increase" data-item-id="${item.id}">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+            </button>
+          </div>
+          <button class="remove-item text-red-500 hover:text-red-400 p-2" data-item-id="${item.id}">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="3,6 5,6 21,6"></polyline>
+              <path d="m19,6v14a2,2 0 0,1 -2,2H7a2,2 0 0,1 -2,-2V6m3,0V4a2,2 0 0,1 2,-2h4a2,2 0 0,1 2,2v2"></path>
+            </svg>
+          </button>
+        </div>
+      `).join('');
+      
+      checkoutBtn?.removeAttribute('disabled');
+    }
+
+    // Update totals
+    if (cartSubtotal) cartSubtotal.textContent = `${cart.subtotal.toFixed(2)}€`;
+    if (cartDeliveryFee) cartDeliveryFee.textContent = `${cart.deliveryFee.toFixed(2)}€`;
+    if (cartLoyaltyDiscount) cartLoyaltyDiscount.textContent = `-${cart.loyaltyDiscount.toFixed(2)}€`;
+    if (cartTotal) cartTotal.textContent = `${cart.total.toFixed(2)}€`;
+
+    // Show/hide conditional rows
+    if (deliveryFeeRow) {
+      deliveryFeeRow.style.display = cart.deliveryFee > 0 ? 'flex' : 'none';
+    }
+    if (loyaltyDiscountRow) {
+      loyaltyDiscountRow.style.display = cart.loyaltyDiscount > 0 ? 'flex' : 'none';
+    }
+
+    // Add event listeners for quantity buttons and remove buttons
+    document.querySelectorAll('.quantity-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const action = btn.getAttribute('data-action');
+        const itemId = btn.getAttribute('data-item-id');
+        const item = cart.items.find(item => item.id === itemId);
+        
+        if (item && action && itemId) {
+          const newQuantity = action === 'increase' ? item.quantity + 1 : item.quantity - 1;
+          CartService.updateItemQuantity(itemId, newQuantity);
+          updateCartDisplay();
+        }
+      });
+    });
+
+    document.querySelectorAll('.remove-item').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const itemId = btn.getAttribute('data-item-id');
+        if (itemId) {
+          CartService.removeItem(itemId);
+          updateCartDisplay();
+        }
+      });
+    });
+  }
+
+  // Event listeners
+  closeCartBtn?.addEventListener('click', closeCart);
+  cartOverlay?.addEventListener('click', closeCart);
+
+  checkoutBtn?.addEventListener('click', () => {
+    window.location.href = '/commander';
+  });
+
+  // Listen for cart updates
+  window.addEventListener('cartUpdated', updateCartDisplay);
+
+  // Global function to open cart
+  (window as any).openCart = openCart;
+
+  // Initial load
+  updateCartDisplay();
+</script>
+
+<style>
+  .quantity-btn {
+    @apply w-8 h-8 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center text-white transition-colors;
+  }
+</style>
+</div>

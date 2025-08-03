@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="fr" class="dark">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="generator" content={Astro.generator} />
+		<title>Osushi - Restaurant de Sushi Authentique | osushi.fr</title>
+		<meta name="description" content="Découvrez l'art culinaire japonais chez Osushi. Sushis frais, makis créatifs et bentos savoureux. Commandez en ligne pour emporter ou livraison." />
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+	</head>
+	<body class="bg-dark-950 text-white overflow-x-hidden">
+		<div id="cursor" class="fixed w-6 h-6 pointer-events-none z-50 mix-blend-difference"></div>
+		<div id="loader" class="fixed inset-0 bg-dark-950 z-50 flex items-center justify-center">
+			<div class="relative">
+				<div class="w-16 h-16 border-4 border-primary-600 border-t-transparent rounded-full animate-spin"></div>
+				<div class="absolute inset-0 flex items-center justify-center">
+					<span class="text-2xl">🍣</span>
+				</div>
+			</div>
+		</div>
+		<slot />
+		
+		<!-- Auth Modal -->
+		<div id="auth-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+			<!-- Auth modal content will be loaded here -->
+		</div>
+		
+		<!-- Cart Sidebar -->
+		<div id="cart-sidebar" class="fixed right-0 top-0 h-full w-96 bg-dark-900 border-l border-white/10 transform translate-x-full transition-transform duration-300 z-50 flex flex-col">
+			<!-- Cart sidebar content will be loaded here -->
+		</div>
+		
+		<!-- Product Modal -->
+		<div id="product-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+			<!-- Product modal content will be loaded here -->
+		</div>
+		
+		<style>
+			#cursor {
+				background: radial-gradient(circle, rgba(220, 38, 38, 0.8) 0%, rgba(220, 38, 38, 0.2) 70%, transparent 100%);
+				border-radius: 50%;
+				transition: transform 0.2s ease-out;
+			}
+			
+			#loader {
+				animation: fadeOut 0.5s ease-out 2s forwards;
+			}
+			
+			@keyframes fadeOut {
+				to {
+					opacity: 0;
+					visibility: hidden;
+				}
+			}
+			
+			html {
+				scroll-behavior: smooth;
+			}
+			
+			body {
+				font-family: 'Inter', sans-serif;
+			}
+		</style>
+		
+		<script>
+			import { AuthService } from '../lib/auth';
+			import { CartService } from '../lib/cart';
+
+			// Custom cursor
+			const cursor = document.getElementById('cursor');
+			let mouseX = 0, mouseY = 0;
+			
+			document.addEventListener('mousemove', (e) => {
+				mouseX = e.clientX;
+				mouseY = e.clientY;
+			});
+			
+			function animateCursor() {
+				cursor.style.left = mouseX - 12 + 'px';
+				cursor.style.top = mouseY - 12 + 'px';
+				requestAnimationFrame(animateCursor);
+			}
+			animateCursor();
+			
+			// Scroll animations
+			const observerOptions = {
+				threshold: 0.1,
+				rootMargin: '0px 0px -50px 0px'
+			};
+			
+			const observer = new IntersectionObserver((entries) => {
+				entries.forEach(entry => {
+					if (entry.isIntersecting) {
+						entry.target.classList.add('animate-slide-up');
+					}
+				});
+			}, observerOptions);
+			
+			// Observe elements after DOM is loaded
+			document.addEventListener('DOMContentLoaded', () => {
+				document.querySelectorAll('.scroll-reveal').forEach(el => {
+					observer.observe(el);
+				});
+				
+				// Load auth modal
+				loadAuthModal();
+				// Load cart sidebar
+				loadCartSidebar();
+				// Load product modal
+				loadProductModal();
+			});
+			
+			// Load modals and sidebars
+			async function loadAuthModal() {
+				try {
+					const response = await fetch('/components/auth/LoginModal.astro');
+					const html = await response.text();
+					document.getElementById('auth-modal').innerHTML = html;
+				} catch (error) {
+					console.error('Error loading auth modal:', error);
+				}
+			}
+			
+			async function loadCartSidebar() {
+				try {
+					const response = await fetch('/components/cart/CartSidebar.astro');
+					const html = await response.text();
+					document.getElementById('cart-sidebar').innerHTML = html;
+				} catch (error) {
+					console.error('Error loading cart sidebar:', error);
+				}
+			}
+			
+			async function loadProductModal() {
+				try {
+					const response = await fetch('/components/products/ProductModal.astro');
+					const html = await response.text();
+					document.getElementById('product-modal').innerHTML = html;
+				} catch (error) {
+					console.error('Error loading product modal:', error);
+				}
+			}
+		</script>
+	</body>
+</html>

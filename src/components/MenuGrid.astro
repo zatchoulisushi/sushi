@@ -1,0 +1,138 @@
+---
+import MenuCard from './MenuCard.astro';
+
+const menuItems = [
+	{
+		id: 1,
+		name: "Sashimi Saumon",
+		description: "Tranches de saumon frais, fondantes et savoureuses",
+		price: 12.90,
+		image: "https://images.pexels.com/photos/357756/pexels-photo-357756.jpeg",
+		category: "sashimi",
+		popular: true
+	},
+	{
+		id: 2,
+		name: "Maki California",
+		description: "Avocat, concombre, surimi et sésame",
+		price: 8.50,
+		image: "https://images.pexels.com/photos/2098085/pexels-photo-2098085.jpeg",
+		category: "maki",
+		popular: false
+	},
+	{
+		id: 3,
+		name: "Nigiri Thon",
+		description: "Riz vinaigré surmonté de thon rouge de qualité",
+		price: 3.80,
+		image: "https://images.pexels.com/photos/2323398/pexels-photo-2323398.jpeg",
+		category: "nigiri",
+		popular: true
+	},
+	{
+		id: 4,
+		name: "Bento Mixte",
+		description: "Sushis variés, salade, riz et accompagnements",
+		price: 18.90,
+		image: "https://images.pexels.com/photos/884600/pexels-photo-884600.jpeg",
+		category: "bento",
+		popular: false
+	},
+	{
+		id: 5,
+		name: "Dragon Roll",
+		description: "Maki spécial avocat et anguille avec sauce teriyaki",
+		price: 14.50,
+		image: "https://images.pexels.com/photos/2098085/pexels-photo-2098085.jpeg",
+		category: "special",
+		popular: true
+	},
+	{
+		id: 6,
+		name: "Chirashi Saumon",
+		description: "Bol de riz avec saumon, avocat et légumes marinés",
+		price: 16.90,
+		image: "https://images.pexels.com/photos/884600/pexels-photo-884600.jpeg",
+		category: "chirashi",
+		popular: false
+	}
+];
+---
+
+<section class="py-20 px-4 sm:px-6 lg:px-8">
+	<div class="max-w-7xl mx-auto">
+		<div class="text-center mb-16 scroll-reveal">
+			<h2 class="text-4xl sm:text-5xl font-bold mb-6 bg-gradient-to-r from-white to-primary-500 bg-clip-text text-transparent">
+				Notre Menu
+			</h2>
+			<p class="text-xl text-white/70 max-w-2xl mx-auto">
+				Chaque plat est préparé avec les ingrédients les plus frais et selon les techniques traditionnelles japonaises
+			</p>
+		</div>
+		
+		<!-- Filter buttons -->
+		<div class="flex flex-wrap justify-center gap-4 mb-12 scroll-reveal">
+			<button class="filter-btn active" data-filter="all">Tout</button>
+			<button class="filter-btn" data-filter="sashimi">Sashimi</button>
+			<button class="filter-btn" data-filter="nigiri">Nigiri</button>
+			<button class="filter-btn" data-filter="maki">Maki</button>
+			<button class="filter-btn" data-filter="special">Spéciaux</button>
+			<button class="filter-btn" data-filter="bento">Bento</button>
+		</div>
+		
+		<!-- Menu grid -->
+		<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+			{menuItems.map((item, index) => (
+				<div class="scroll-reveal" style={`animation-delay: ${index * 0.1}s`}>
+					<MenuCard {...item} />
+				</div>
+			))}
+		</div>
+	</div>
+</section>
+
+<style>
+	.filter-btn {
+		@apply px-6 py-3 rounded-full font-medium transition-all duration-300 border border-white/20;
+		background: rgba(255, 255, 255, 0.05);
+		color: rgba(255, 255, 255, 0.7);
+	}
+	
+	.filter-btn:hover {
+		@apply border-primary-600/50 text-white;
+		background: rgba(220, 38, 38, 0.1);
+	}
+	
+	.filter-btn.active {
+		@apply bg-primary-600 text-white border-primary-600;
+		box-shadow: 0 0 20px rgba(220, 38, 38, 0.3);
+	}
+</style>
+
+<script>
+	// Filter functionality
+	const filterButtons = document.querySelectorAll('.filter-btn');
+	const menuCards = document.querySelectorAll('.menu-card');
+	
+	filterButtons.forEach(button => {
+		button.addEventListener('click', () => {
+			// Update active button
+			filterButtons.forEach(btn => btn.classList.remove('active'));
+			button.classList.add('active');
+			
+			// Filter cards
+			const filter = button.getAttribute('data-filter');
+			
+			menuCards.forEach(card => {
+				const category = card.getAttribute('data-category');
+				
+				if (filter === 'all' || category === filter) {
+					card.style.display = 'block';
+					card.style.animation = 'scaleIn 0.5s ease-out';
+				} else {
+					card.style.display = 'none';
+				}
+			});
+		});
+	});
+</script>

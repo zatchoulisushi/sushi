@@ -1,0 +1,150 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { Award, Users, Heart, Clock } from 'lucide-astro';
+---
+
+<Layout>
+	<Header />
+	<main class="pt-16">
+		<!-- Hero Section -->
+		<section class="py-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+			<div class="absolute inset-0 bg-gradient-to-br from-dark-950 via-dark-900 to-primary-950"></div>
+			<div class="absolute inset-0 bg-[url('https://images.pexels.com/photos/2323398/pexels-photo-2323398.jpeg')] bg-cover bg-center opacity-20"></div>
+			
+			<div class="relative z-10 max-w-4xl mx-auto text-center">
+				<h1 class="text-5xl sm:text-6xl font-bold mb-6 bg-gradient-to-r from-white to-primary-500 bg-clip-text text-transparent scroll-reveal">
+					Notre Histoire
+				</h1>
+				<p class="text-xl text-white/70 max-w-2xl mx-auto scroll-reveal">
+					Une passion pour l'art culinaire japonais transmise de génération en génération
+				</p>
+			</div>
+		</section>
+		
+		<!-- Chef Story -->
+		<section class="py-20 px-4 sm:px-6 lg:px-8">
+			<div class="max-w-6xl mx-auto">
+				<div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+					<div class="scroll-reveal">
+						<img 
+							src="https://images.pexels.com/photos/887827/pexels-photo-887827.jpeg" 
+							alt="Chef Takeshi"
+							class="w-full h-96 object-cover rounded-2xl shadow-2xl"
+						/>
+					</div>
+					<div class="scroll-reveal">
+						<h2 class="text-3xl sm:text-4xl font-bold mb-6 text-white">
+							Chef Takeshi Yamamoto
+						</h2>
+						<p class="text-white/70 mb-6 leading-relaxed">
+							Après 15 ans d'apprentissage au Japon dans les plus prestigieux restaurants de Tokyo, 
+							le Chef Takeshi a décidé de partager sa passion pour l'art du sushi en France.
+						</p>
+						<p class="text-white/70 mb-8 leading-relaxed">
+							Chaque sushi est une œuvre d'art, préparée avec un respect profond pour les traditions 
+							japonaises et les produits de la mer les plus nobles.
+						</p>
+						
+						<div class="grid grid-cols-2 gap-6">
+							<div class="text-center">
+								<div class="text-3xl font-bold text-primary-500">15+</div>
+								<div class="text-white/70 text-sm">Années d'expérience</div>
+							</div>
+							<div class="text-center">
+								<div class="text-3xl font-bold text-primary-500">3</div>
+								<div class="text-white/70 text-sm">Années au Japon</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+		
+		<!-- Values -->
+		<section class="py-20 px-4 sm:px-6 lg:px-8">
+			<div class="max-w-6xl mx-auto">
+				<h2 class="text-3xl sm:text-4xl font-bold text-center mb-16 text-white scroll-reveal">
+					Nos Valeurs
+				</h2>
+				
+				<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+					<div class="value-card scroll-reveal">
+						<Award size={48} class="text-primary-500 mb-4 mx-auto" />
+						<h3 class="text-xl font-semibold mb-3 text-white">Excellence</h3>
+						<p class="text-white/70 text-center">
+							Chaque plat est préparé selon les plus hauts standards de qualité.
+						</p>
+					</div>
+					
+					<div class="value-card scroll-reveal" style="animation-delay: 0.1s">
+						<Users size={48} class="text-primary-500 mb-4 mx-auto" />
+						<h3 class="text-xl font-semibold mb-3 text-white">Respect</h3>
+						<p class="text-white/70 text-center">
+							Respect des traditions japonaises et de nos clients.
+						</p>
+					</div>
+					
+					<div class="value-card scroll-reveal" style="animation-delay: 0.2s">
+						<Heart size={48} class="text-primary-500 mb-4 mx-auto" />
+						<h3 class="text-xl font-semibold mb-3 text-white">Passion</h3>
+						<p class="text-white/70 text-center">
+							L'amour de la cuisine japonaise guide chacun de nos gestes.
+						</p>
+					</div>
+					
+					<div class="value-card scroll-reveal" style="animation-delay: 0.3s">
+						<Clock size={48} class="text-primary-500 mb-4 mx-auto" />
+						<h3 class="text-xl font-semibold mb-3 text-white">Fraîcheur</h3>
+						<p class="text-white/70 text-center">
+							Produits sélectionnés quotidiennement pour une fraîcheur optimale.
+						</p>
+					</div>
+				</div>
+			</div>
+		</section>
+		
+		<!-- Gallery -->
+		<section class="py-20 px-4 sm:px-6 lg:px-8">
+			<div class="max-w-6xl mx-auto">
+				<h2 class="text-3xl sm:text-4xl font-bold text-center mb-16 text-white scroll-reveal">
+					Notre Restaurant
+				</h2>
+				
+				<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+					<div class="gallery-item col-span-1 md:col-span-2 lg:col-span-1 scroll-reveal">
+						<img src="https://images.pexels.com/photos/262978/pexels-photo-262978.jpeg" alt="Restaurant interior" class="gallery-image">
+					</div>
+					<div class="gallery-item scroll-reveal" style="animation-delay: 0.1s">
+						<img src="https://images.pexels.com/photos/941861/pexels-photo-941861.jpeg" alt="Sushi preparation" class="gallery-image">
+					</div>
+					<div class="gallery-item scroll-reveal" style="animation-delay: 0.2s">
+						<img src="https://images.pexels.com/photos/884600/pexels-photo-884600.jpeg" alt="Fresh ingredients" class="gallery-image">
+					</div>
+					<div class="gallery-item scroll-reveal" style="animation-delay: 0.3s">
+						<img src="https://images.pexels.com/photos/357756/pexels-photo-357756.jpeg" alt="Sushi plate" class="gallery-image">
+					</div>
+					<div class="gallery-item col-span-1 md:col-span-2 scroll-reveal" style="animation-delay: 0.4s">
+						<img src="https://images.pexels.com/photos/2098085/pexels-photo-2098085.jpeg" alt="Sushi rolls" class="gallery-image">
+					</div>
+				</div>
+			</div>
+		</section>
+	</main>
+	<Footer />
+</Layout>
+
+<style>
+	.value-card {
+		@apply p-8 bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 text-center transition-all duration-500 hover:scale-105 hover:bg-white/10;
+	}
+	
+	.gallery-item {
+		@apply aspect-square overflow-hidden rounded-2xl hover:scale-105 transition-transform duration-500;
+	}
+	
+	.gallery-image {
+		@apply w-full h-full object-cover;
+	}
+</style>

@@ -1,0 +1,129 @@
+---
+import { ChevronDown } from 'lucide-astro';
+---
+
+<section class="relative min-h-screen flex items-center justify-center overflow-hidden">
+	<!-- Background with parallax effect -->
+	<div class="absolute inset-0 z-0">
+		<div class="absolute inset-0 bg-gradient-to-br from-dark-950 via-dark-900 to-primary-950"></div>
+		<div class="absolute inset-0 bg-[url('https://images.pexels.com/photos/357756/pexels-photo-357756.jpeg')] bg-cover bg-center opacity-20"></div>
+		<div class="absolute inset-0 bg-gradient-to-t from-dark-950 via-transparent to-transparent"></div>
+	</div>
+	
+	<!-- Animated particles -->
+	<div class="absolute inset-0 overflow-hidden pointer-events-none">
+		<div class="particle particle-1"></div>
+		<div class="particle particle-2"></div>
+		<div class="particle particle-3"></div>
+		<div class="particle particle-4"></div>
+		<div class="particle particle-5"></div>
+	</div>
+	
+	<!-- Content -->
+	<div class="relative z-10 text-center max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+		<div class="hero-content">
+			<div class="mb-8 animate-float">
+				<span class="text-8xl sm:text-9xl">🍣</span>
+			</div>
+			
+			<h1 class="text-5xl sm:text-7xl font-bold mb-6 bg-gradient-to-r from-white via-white to-primary-500 bg-clip-text text-transparent">
+				Osushi
+			</h1>
+			
+			<p class="text-xl sm:text-2xl text-white/80 mb-8 font-light leading-relaxed">
+				L'art culinaire japonais dans sa plus pure tradition
+			</p>
+			
+			<p class="text-lg text-white/60 mb-12 max-w-2xl mx-auto">
+				Découvrez une expérience gastronomique unique où chaque sushi est une œuvre d'art, 
+				préparée avec passion par nos maîtres sushi.
+			</p>
+			
+			<div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+				<a href="/commander" class="btn-primary group">
+					<span>Commander maintenant</span>
+					<div class="btn-glow"></div>
+				</a>
+				<a href="/menu" class="btn-secondary">
+					Découvrir le menu
+				</a>
+			</div>
+		</div>
+	</div>
+	
+	<!-- Scroll indicator -->
+	<div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
+		<ChevronDown size={32} class="text-white/60" />
+	</div>
+</section>
+
+<style>
+	.hero-content {
+		animation: slideUp 1s ease-out;
+	}
+	
+	.btn-primary {
+		@apply relative px-8 py-4 bg-gradient-to-r from-primary-600 to-primary-700 text-white font-semibold rounded-full overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-xl;
+	}
+	
+	.btn-primary:hover .btn-glow {
+		opacity: 1;
+	}
+	
+	.btn-glow {
+		position: absolute;
+		inset: 0;
+		background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.3) 50%, transparent 70%);
+		opacity: 0;
+		transition: opacity 0.3s ease;
+		animation: shimmer 2s infinite;
+	}
+	
+	.btn-secondary {
+		@apply px-8 py-4 border-2 border-white/30 text-white font-semibold rounded-full hover:bg-white/10 hover:border-white/50 transition-all duration-300;
+	}
+	
+	.particle {
+		position: absolute;
+		width: 4px;
+		height: 4px;
+		background: radial-gradient(circle, #dc2626, transparent);
+		border-radius: 50%;
+		opacity: 0.6;
+	}
+	
+	.particle-1 {
+		top: 20%;
+		left: 10%;
+		animation: float 4s ease-in-out infinite;
+	}
+	
+	.particle-2 {
+		top: 50%;
+		right: 15%;
+		animation: float 3s ease-in-out infinite 1s;
+	}
+	
+	.particle-3 {
+		bottom: 30%;
+		left: 20%;
+		animation: float 5s ease-in-out infinite 2s;
+	}
+	
+	.particle-4 {
+		top: 30%;
+		right: 30%;
+		animation: float 3.5s ease-in-out infinite 0.5s;
+	}
+	
+	.particle-5 {
+		bottom: 20%;
+		right: 10%;
+		animation: float 4.5s ease-in-out infinite 1.5s;
+	}
+	
+	@keyframes shimmer {
+		0% { transform: translateX(-100%); }
+		100% { transform: translateX(100%); }
+	}
+</style>

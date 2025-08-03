@@ -1,0 +1,83 @@
+---
+import { Clock, Truck, Star, Award } from 'lucide-astro';
+---
+
+<section class="py-20 px-4 sm:px-6 lg:px-8 relative">
+	<div class="absolute inset-0 bg-gradient-to-b from-transparent via-primary-950/10 to-transparent"></div>
+	
+	<div class="max-w-7xl mx-auto relative z-10">
+		<div class="text-center mb-16 scroll-reveal">
+			<h2 class="text-4xl sm:text-5xl font-bold mb-6 text-white">
+				Pourquoi choisir Osushi ?
+			</h2>
+			<p class="text-xl text-white/70 max-w-2xl mx-auto">
+				Une expérience culinaire japonaise authentique qui éveille tous vos sens
+			</p>
+		</div>
+		
+		<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+			<div class="feature-card scroll-reveal">
+				<div class="feature-icon">
+					<Clock size={32} />
+				</div>
+				<h3 class="text-xl font-semibold mb-3 text-white">Fraîcheur Garantie</h3>
+				<p class="text-white/70 leading-relaxed">
+					Poissons sélectionnés quotidiennement et préparés à la commande pour une fraîcheur optimale.
+				</p>
+			</div>
+			
+			<div class="feature-card scroll-reveal" style="animation-delay: 0.1s">
+				<div class="feature-icon">
+					<Truck size={32} />
+				</div>
+				<h3 class="text-xl font-semibold mb-3 text-white">Livraison Rapide</h3>
+				<p class="text-white/70 leading-relaxed">
+					Livraison en 30 minutes maximum dans un rayon de 5km. Emballage isotherme de qualité.
+				</p>
+			</div>
+			
+			<div class="feature-card scroll-reveal" style="animation-delay: 0.2s">
+				<div class="feature-icon">
+					<Star size={32} />
+				</div>
+				<h3 class="text-xl font-semibold mb-3 text-white">5★ sur Google</h3>
+				<p class="text-white/70 leading-relaxed">
+					Plus de 500 avis clients attestent de la qualité exceptionnelle de nos créations.
+				</p>
+			</div>
+			
+			<div class="feature-card scroll-reveal" style="animation-delay: 0.3s">
+				<div class="feature-icon">
+					<Award size={32} />
+				</div>
+				<h3 class="text-xl font-semibold mb-3 text-white">Chef Certifié</h3>
+				<p class="text-white/70 leading-relaxed">
+					Notre chef a étudié 3 ans au Japon et maîtrise l'art traditionnel du sushi.
+				</p>
+			</div>
+		</div>
+	</div>
+</section>
+
+<style>
+	.feature-card {
+		@apply p-8 rounded-2xl backdrop-blur-sm transition-all duration-500 hover:scale-105;
+		background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%);
+		border: 1px solid rgba(255,255,255,0.1);
+	}
+	
+	.feature-card:hover {
+		background: linear-gradient(135deg, rgba(220,38,38,0.1) 0%, rgba(255,255,255,0.05) 100%);
+		border-color: rgba(220, 38, 38, 0.3);
+		box-shadow: 0 20px 40px rgba(220, 38, 38, 0.15);
+	}
+	
+	.feature-icon {
+		@apply w-16 h-16 bg-gradient-to-br from-primary-600 to-primary-700 rounded-2xl flex items-center justify-center mb-6 text-white transition-transform duration-300;
+	}
+	
+	.feature-card:hover .feature-icon {
+		transform: translateY(-4px) scale(1.1);
+		box-shadow: 0 10px 25px rgba(220, 38, 38, 0.3);
+	}
+</style>
