@@ -1,8 +1,12 @@
-import type { ProductWithVariants } from './products';
-
+// Client-side cart management - no Supabase dependency needed
 export interface CartItem {
   id: string;
-  product: ProductWithVariants;
+  product: {
+    id: string;
+    name: string;
+    base_price: number;
+    image_url: string;
+  };
   variantId?: string;
   quantity: number;
   unitPrice: number;
@@ -45,12 +49,12 @@ export class CartService {
     this.notifyCartUpdate();
   }
 
-  static addItem(product: ProductWithVariants, variantId?: string, quantity: number = 1, specialInstructions?: string) {
+  static addItem(product: { id: string; name: string; base_price: number; image_url: string }, variantId?: string, quantity: number = 1, specialInstructions?: string) {
     const cart = this.getCart();
     const itemId = `${product.id}-${variantId || 'default'}`;
     
     const existingItem = cart.items.find(item => item.id === itemId);
-    const unitPrice = this.calculateItemPrice(product, variantId);
+    const unitPrice = product.base_price; // Simplified for now
 
     if (existingItem) {
       existingItem.quantity += quantity;
@@ -115,19 +119,6 @@ export class CartService {
     this.updateCartTotals(cart);
     this.saveCart(cart);
     return cart;
-  }
-
-  private static calculateItemPrice(product: ProductWithVariants, variantId?: string): number {
-    let price = product.base_price;
-    
-    if (variantId) {
-      const variant = product.variants.find(v => v.id === variantId);
-      if (variant) {
-        price += variant.price_modifier;
-      }
-    }
-    
-    return price;
   }
 
   private static updateCartTotals(cart: Cart) {

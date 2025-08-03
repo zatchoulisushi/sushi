@@ -18,7 +18,8 @@ import { X, Plus, Minus } from 'lucide-astro';
 
 <script>
   import { CartService } from '../../lib/cart';
-  import { ProductService } from '../../lib/products';
+  
+  // Note: ProductService removed - using simplified product handling for static version
 
   const modal = document.getElementById('product-modal');
   const closeBtn = document.getElementById('close-product-modal');
@@ -37,19 +38,30 @@ import { X, Plus, Minus } from 'lucide-astro';
   }
 
   async function openProductModal(productId) {
-    try {
-      const product = await ProductService.getProduct(productId);
-      currentProduct = product;
-      selectedVariant = product.variants.find(v => v.is_default) || product.variants[0] || null;
-      
-      renderProductModal(product);
-      
-      modal?.classList.remove('hidden');
-      modal?.classList.add('flex');
-    } catch (error) {
-      console.error('Error loading product:', error);
-      alert('Erreur lors du chargement du produit');
+    // Simplified version for static content layer
+    const modalContent = document.getElementById('product-modal-content');
+    if (modalContent) {
+      modalContent.innerHTML = `
+        <div class="text-center p-8">
+          <div class="text-4xl mb-4">🍣</div>
+          <h3 class="text-xl font-bold text-white mb-4">Produit ${productId}</h3>
+          <p class="text-white/70 mb-6">
+            La visualisation détaillée des produits nécessite une intégration backend qui n'est pas disponible 
+            dans cette version statique utilisant Astro Content Layer.
+          </p>
+          <p class="text-white/60 text-sm mb-6">
+            Pour activer cette fonctionnalité, utilisez un système de gestion de produits côté serveur.
+          </p>
+          <button onclick="closeProductModal()" 
+                  class="px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white rounded-xl transition-all duration-300">
+            Fermer
+          </button>
+        </div>
+      `;
     }
+    
+    modal?.classList.remove('hidden');
+    modal?.classList.add('flex');
   }
 
   function renderProductModal(product) {
@@ -230,6 +242,10 @@ import { X, Plus, Minus } from 'lucide-astro';
     }
   }
 
+  function closeProductModal() {
+    closeModal();
+  }
+
   function showAddToCartFeedback(productName, quantity) {
     const feedback = document.createElement('div');
     feedback.className = 'fixed top-20 right-4 bg-primary-600 text-white px-6 py-3 rounded-xl shadow-lg z-50 transition-all duration-300 transform translate-x-0';
@@ -260,8 +276,9 @@ import { X, Plus, Minus } from 'lucide-astro';
     if (e.target === modal) closeModal();
   });
 
-  // Global function to open product modal
-  (window as any).openProductModal = openProductModal;
+  // Global functions
+  window.openProductModal = openProductModal;
+  window.closeProductModal = closeProductModal;
 
   // Auto-inject modal into page
   if (typeof window !== 'undefined' && !document.getElementById('product-modal-container')) {

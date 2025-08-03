@@ -143,7 +143,6 @@ import { Menu, X, ShoppingBag, User } from 'lucide-astro';
 </style>
 
 <script>
-	import { AuthService } from '../lib/auth';
 	import { CartService } from '../lib/cart';
 
 	// Header scroll effect
@@ -208,45 +207,19 @@ import { Menu, X, ShoppingBag, User } from 'lucide-astro';
 		(window as any).showAuthModal?.();
 	});
 
-	// Logout button
+	// Logout button (simplified for static version)
 	logoutBtn?.addEventListener('click', async () => {
-		try {
-			await AuthService.signOut();
-			window.location.reload();
-		} catch (error) {
-			console.error('Logout error:', error);
+		// In a static version, just show a message
+		if (confirm('La déconnexion nécessite une authentification backend. Rediriger vers la page d\'accueil ?')) {
+			window.location.href = '/';
 		}
 	});
 
-	// Update user menu based on auth state
-	async function updateUserMenu() {
-		try {
-			const user = await AuthService.getCurrentUser();
-			
-			if (user) {
-				const profile = await AuthService.getUserProfile(user.id);
-				
-				userMenuAuthenticated?.classList.remove('hidden');
-				userMenuGuest?.classList.add('hidden');
-				
-				const userName = document.getElementById('user-name');
-				const userEmail = document.getElementById('user-email');
-				
-				if (userName && profile) {
-					userName.textContent = `${profile.first_name} ${profile.last_name}`;
-				}
-				if (userEmail) {
-					userEmail.textContent = user.email || '';
-				}
-			} else {
-				userMenuAuthenticated?.classList.add('hidden');
-				userMenuGuest?.classList.remove('hidden');
-			}
-		} catch (error) {
-			console.error('Error updating user menu:', error);
-			userMenuAuthenticated?.classList.add('hidden');
-			userMenuGuest?.classList.remove('hidden');
-		}
+	// Update user menu (simplified for static version)
+	function updateUserMenu() {
+		// In static version, always show guest menu
+		userMenuAuthenticated?.classList.add('hidden');
+		userMenuGuest?.classList.remove('hidden');
 	}
 
 	// Update cart count
