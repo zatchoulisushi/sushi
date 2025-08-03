@@ -1,5 +1,12 @@
 ---
 import ProductCard from './ProductCard.astro';
+
+interface Props {
+  categories?: any[];
+  products?: any[];
+}
+
+const { categories = [], products = [] } = Astro.props;
 ---
 
 <section class="py-20 px-4 sm:px-6 lg:px-8">
@@ -16,12 +23,23 @@ import ProductCard from './ProductCard.astro';
 		<!-- Filter buttons -->
 		<div class="flex flex-wrap justify-center gap-4 mb-12 scroll-reveal" id="category-filters">
 			<button class="filter-btn active" data-filter="all">Tout</button>
-			<!-- Categories will be loaded dynamically -->
+			{categories.map(category => (
+				<button class="filter-btn" data-filter={category.data ? category.data.id : category.id}>
+					{category.data ? category.data.name : category.name}
+				</button>
+			))}
 		</div>
 		
-		<!-- Menu grid -->
-		<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="products-grid">
-			<!-- Products will be loaded dynamically -->
+		<!-- Products grid -->
+		<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 scroll-reveal" id="products-grid">
+			<!-- Products will be rendered by JavaScript -->
+		</div>
+		
+		<!-- Show all products button -->
+		<div class="text-center mt-12 scroll-reveal">
+			<a href="/menu" class="btn-primary">
+				Voir tout le menu
+			</a>
 		</div>
 	</div>
 </section>
@@ -44,48 +62,9 @@ import ProductCard from './ProductCard.astro';
 	}
 </style>
 
-<script>
-	import { ProductService } from '../lib/products';
-
-	let categories = [];
-	let products = [];
-	let filteredProducts = [];
-
-	async function loadMenuData() {
-		try {
-			categories = await ProductService.getCategories();
-			products = await ProductService.getProducts();
-			filteredProducts = [...products];
-			
-			renderCategoryFilters();
-			renderProducts();
-		} catch (error) {
-			console.error('Error loading menu data:', error);
-			showError('Erreur lors du chargement du menu');
-		}
-	}
-
-	function renderCategoryFilters() {
-		const filtersContainer = document.getElementById('category-filters');
-		if (!filtersContainer) return;
-
-		const allButton = filtersContainer.querySelector('[data-filter="all"]');
-		
-		categories.forEach(category => {
-			const button = document.createElement('button');
-			button.className = 'filter-btn';
-			button.setAttribute('data-filter', category.id);
-			button.textContent = category.name;
-			filtersContainer.appendChild(button);
-		});
-
-		// Add event listeners
-		filtersContainer.addEventListener('click', (e) => {
-			if (e.target.classList.contains('filter-btn')) {
-				handleFilterClick(e.target);
-			}
-		});
-	}
+<script define:vars={{ categories, products }}>
+	// Data is now passed as props instead of being fetched
+	let filteredProducts = [...products];
 
 	function renderProducts() {
 		const grid = document.getElementById('products-grid');
@@ -101,67 +80,73 @@ import ProductCard from './ProductCard.astro';
 			return;
 		}
 
-		grid.innerHTML = filteredProducts.map((product, index) => `
-			<div class="product-card group relative bg-white/5 backdrop-blur-sm rounded-2xl overflow-hidden hover:bg-white/10 transition-all duration-500 hover:scale-105 hover:shadow-2xl ${product.is_popular ? 'ring-2 ring-primary-600/50' : ''}" 
-				 data-category="${product.category_id}" 
-				 style="animation-delay: ${index * 0.1}s">
-				
-				${product.is_popular ? `
-					<div class="absolute top-4 left-4 z-10 bg-primary-600 text-white px-3 py-1 rounded-full text-sm font-medium flex items-center gap-1">
-						<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-							<polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"></polygon>
-						</svg>
-						Populaire
-					</div>
-				` : ''}
-				
-				<div class="aspect-video overflow-hidden">
-					<img 
-						src="${product.image_url}" 
-						alt="${product.name}"
-						class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-						loading="lazy"
-					/>
-				</div>
-				
-				<div class="p-6">
-					<h3 class="text-xl font-semibold mb-2 text-white group-hover:text-primary-400 transition-colors">
-						${product.name}
-					</h3>
-					<p class="text-white/70 text-sm mb-4 leading-relaxed">
-						${product.description}
-					</p>
+		// Show only first 6 products for homepage
+		const productsToShow = filteredProducts.slice(0, 6);
+
+		grid.innerHTML = productsToShow.map((product, index) => {
+			const productData = product.data || product;
+			return `
+				<div class="product-card group relative bg-white/5 backdrop-blur-sm rounded-2xl overflow-hidden hover:bg-white/10 transition-all duration-500 hover:scale-105 hover:shadow-2xl ${productData.is_popular ? 'ring-2 ring-primary-600/50' : ''}" 
+					 data-category="${productData.category_id}" 
+					 style="animation-delay: ${index * 0.1}s">
 					
-					${product.allergens && product.allergens.length > 0 ? `
-						<div class="mb-4">
-							<div class="flex flex-wrap gap-1">
-								${product.allergens.map(allergen => `
-									<span class="px-2 py-1 bg-yellow-600/20 text-yellow-400 text-xs rounded-full">${allergen}</span>
-								`).join('')}
-							</div>
+					${productData.is_popular ? `
+						<div class="absolute top-4 left-4 z-10 bg-primary-600 text-white px-3 py-1 rounded-full text-sm font-medium flex items-center gap-1">
+							<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+								<polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"></polygon>
+							</svg>
+							Populaire
 						</div>
 					` : ''}
 					
-					<div class="flex items-center justify-between">
-						<span class="text-2xl font-bold text-primary-500">
-							${product.base_price.toFixed(2)}€
-						</span>
-						
-						<button class="add-to-cart-btn relative overflow-hidden bg-primary-600 hover:bg-primary-700 text-white p-3 rounded-full transition-all duration-300 hover:scale-110 hover:shadow-lg" 
-								onclick="openProductModal('${product.id}')">
-							<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-								<line x1="12" y1="5" x2="12" y2="19"></line>
-								<line x1="5" y1="12" x2="19" y2="12"></line>
-							</svg>
-							<div class="absolute inset-0 bg-white/20 transform scale-0 transition-transform duration-300 rounded-full"></div>
-						</button>
+					<div class="aspect-video overflow-hidden">
+						<img 
+							src="${productData.image_url || '/placeholder-sushi.jpg'}" 
+							alt="${productData.name}"
+							class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+							loading="lazy"
+						/>
 					</div>
+					
+					<div class="p-6">
+						<h3 class="text-xl font-semibold mb-2 text-white group-hover:text-primary-400 transition-colors">
+							${productData.name}
+						</h3>
+						<p class="text-white/70 text-sm mb-4 leading-relaxed">
+							${productData.description}
+						</p>
+						
+						${productData.allergens && productData.allergens.length > 0 ? `
+							<div class="mb-4">
+								<div class="flex flex-wrap gap-1">
+									${productData.allergens.map(allergen => `
+										<span class="px-2 py-1 bg-yellow-600/20 text-yellow-400 text-xs rounded-full">${allergen}</span>
+									`).join('')}
+								</div>
+							</div>
+						` : ''}
+						
+						<div class="flex items-center justify-between">
+							<span class="text-2xl font-bold text-primary-500">
+								${productData.base_price ? productData.base_price.toFixed(2) : '0.00'}€
+							</span>
+							
+							<button class="add-to-cart-btn relative overflow-hidden bg-primary-600 hover:bg-primary-700 text-white p-3 rounded-full transition-all duration-300 hover:scale-110 hover:shadow-lg" 
+									onclick="addToCart('${productData.id}')">
+								<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+									<line x1="12" y1="5" x2="12" y2="19"></line>
+									<line x1="5" y1="12" x2="19" y2="12"></line>
+								</svg>
+								<div class="absolute inset-0 bg-white/20 transform scale-0 transition-transform duration-300 rounded-full"></div>
+							</button>
+						</div>
+					</div>
+					
+					<!-- Hover overlay -->
+					<div class="absolute inset-0 bg-gradient-to-t from-primary-900/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
 				</div>
-				
-				<!-- Hover overlay -->
-				<div class="absolute inset-0 bg-gradient-to-t from-primary-900/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
-			</div>
-		`).join('');
+			`;
+		}).join('');
 	}
 
 	function handleFilterClick(button) {
@@ -175,34 +160,34 @@ import ProductCard from './ProductCard.astro';
 		if (filter === 'all') {
 			filteredProducts = [...products];
 		} else {
-			filteredProducts = products.filter(product => product.category_id === filter);
+			filteredProducts = products.filter(product => {
+				const productData = product.data || product;
+				return productData.category_id === filter;
+			});
 		}
 		
 		renderProducts();
 	}
 
-	function showError(message) {
-		const grid = document.getElementById('products-grid');
-		if (grid) {
-			grid.innerHTML = `
-				<div class="col-span-full text-center py-12 text-red-400">
-					<div class="text-4xl mb-4">⚠️</div>
-					<p>${message}</p>
-					<button onclick="loadMenuData()" class="mt-4 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors">
-						Réessayer
-					</button>
-				</div>
-			`;
+	// Set up event listeners when DOM is ready
+	document.addEventListener('DOMContentLoaded', () => {
+		// Add event listeners for filter buttons
+		const filtersContainer = document.getElementById('category-filters');
+		if (filtersContainer) {
+			filtersContainer.addEventListener('click', (e) => {
+				if (e.target.classList.contains('filter-btn')) {
+					handleFilterClick(e.target);
+				}
+			});
 		}
-	}
-	
-	// Global function for opening product modal
-	(window as any).openProductModal = (productId) => {
-		if (typeof window !== 'undefined' && (window as any).openProductModal) {
-			(window as any).openProductModal(productId);
-		}
-	};
 
-	// Load menu data on page load
-	loadMenuData();
+		// Initial render
+		renderProducts();
+	});
+	
+	// Global function for adding to cart
+	window.addToCart = (productId) => {
+		console.log('Adding to cart:', productId);
+		// This would use CartService in a real implementation
+	};
 </script>
