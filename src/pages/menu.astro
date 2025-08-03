@@ -3,6 +3,7 @@ import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
 import ProductCard from '../components/ProductCard.astro';
 import Footer from '../components/Footer.astro';
+import ProductModal from '../components/products/ProductModal.astro';
 import { getCategories, getProductsWithVariants } from '../lib/content-data';
 
 // Load data at build time via Content Layer with fallbacks
@@ -107,6 +108,7 @@ const productsWithVariants = await getProductsWithVariants();
 		</section>
 	</main>
 	<Footer />
+	<ProductModal products={productsWithVariants} />
 </Layout>
 
 <style>

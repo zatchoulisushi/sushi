@@ -85,39 +85,30 @@ import { TrendingUp, Users, Package, DollarSign } from 'lucide-astro';
 </style>
 
 <script>
-  import { supabase } from '../../lib/supabase';
-
+  // Static admin dashboard - no runtime data loading in static site mode
+  
   async function loadDashboardData() {
-    try {
-      // Load recent orders
-      const { data: orders } = await supabase
-        .from('orders')
-        .select(`
-          *,
-          items:order_items(
-            *,
-            product:products(name, image_url)
-          )
-        `)
-        .order('created_at', { ascending: false })
-        .limit(5);
+    console.warn('Admin dashboard - Static site mode: Dashboard data not available');
+    
+    // Show placeholder stats
+    displayStats([]);
+    displayRecentOrders([]);
+    
+    // Display message about static mode
+    showStaticModeMessage();
+  }
 
-      // Load stats
-      const { data: stats } = await supabase
-        .from('orders')
-        .select('total_amount, created_at')
-        .gte('created_at', new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString());
-
-      if (orders) {
-        displayRecentOrders(orders);
-      }
-
-      if (stats) {
-        displayStats(stats);
-      }
-
-    } catch (error) {
-      console.error('Error loading dashboard data:', error);
+  function showStaticModeMessage() {
+    const container = document.getElementById('recent-orders-container');
+    if (container) {
+      container.innerHTML = `
+        <div class="text-center py-12 text-white/60">
+          <div class="text-4xl mb-4">📊</div>
+          <p class="mb-2">Tableau de bord administrateur</p>
+          <p class="text-sm">Les données en temps réel ne sont pas disponibles en mode site statique.</p>
+          <p class="text-sm">Configurez une base de données pour les fonctionnalités administratives.</p>
+        </div>
+      `;
     }
   }
 

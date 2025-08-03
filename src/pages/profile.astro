@@ -169,9 +169,8 @@ import { User, MapPin, Phone, Mail, Award, Clock, Package } from 'lucide-astro';
 </style>
 
 <script>
-  import { AuthService } from '../lib/auth';
-  import { OrderService } from '../lib/orders';
-  import { supabase } from '../lib/supabase';
+  import { AuthService } from '../lib/auth-static';
+  import { OrderService } from '../lib/orders-static';
 
   let currentUser = null;
   let userProfile = null;

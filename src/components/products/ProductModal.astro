@@ -1,5 +1,12 @@
 ---
 import { X, Plus, Minus } from 'lucide-astro';
+import type { ProductWithVariants } from '../../lib/content-data';
+
+export interface Props {
+  products: ProductWithVariants[];
+}
+
+const { products } = Astro.props;
 ---
 
 <div id="product-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
@@ -16,9 +23,8 @@ import { X, Plus, Minus } from 'lucide-astro';
   </div>
 </div>
 
-<script>
+<script define:vars={{ products }}>
   import { CartService } from '../../lib/cart';
-  import { ProductService } from '../../lib/products';
 
   const modal = document.getElementById('product-modal');
   const closeBtn = document.getElementById('close-product-modal');
@@ -38,7 +44,13 @@ import { X, Plus, Minus } from 'lucide-astro';
 
   async function openProductModal(productId) {
     try {
-      const product = await ProductService.getProduct(productId);
+      const product = products.find(p => p.id === productId);
+      if (!product) {
+        console.error('Product not found:', productId);
+        alert('Produit non trouvé');
+        return;
+      }
+      
       currentProduct = product;
       selectedVariant = product.variants.find(v => v.is_default) || product.variants[0] || null;
       
