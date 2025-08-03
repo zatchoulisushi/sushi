@@ -3,6 +3,11 @@ import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
 import ProductCard from '../components/ProductCard.astro';
 import Footer from '../components/Footer.astro';
+import { ContentProductService } from '../lib/content-products';
+
+// Load data at build time using Content Layer
+const categories = await ContentProductService.getCategories();
+const products = await ContentProductService.getProducts();
 ---
 
 <Layout>
@@ -60,26 +65,9 @@ import Footer from '../components/Footer.astro';
 	}
 </style>
 
-<script>
-	import { ProductService } from '../lib/products';
-
-	let categories = [];
-	let products = [];
-	let filteredProducts = [];
-
-	async function loadMenuData() {
-		try {
-			categories = await ProductService.getCategories();
-			products = await ProductService.getProducts();
-			filteredProducts = [...products];
-			
-			renderCategoryFilters();
-			renderProducts();
-		} catch (error) {
-			console.error('Error loading menu data:', error);
-			showError('Erreur lors du chargement du menu');
-		}
-	}
+<script define:vars={{ categories, products }}>
+	// Data is now loaded at build time and passed from server
+	let filteredProducts = [...products];
 
 	function renderCategoryFilters() {
 		const filtersContainer = document.getElementById('category-filters');
@@ -194,21 +182,6 @@ import Footer from '../components/Footer.astro';
 		
 		renderProducts();
 	}
-
-	function showError(message) {
-		const grid = document.getElementById('products-grid');
-		if (grid) {
-			grid.innerHTML = `
-				<div class="col-span-full text-center py-12 text-red-400">
-					<div class="text-4xl mb-4">⚠️</div>
-					<p>${message}</p>
-					<button onclick="loadMenuData()" class="mt-4 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors">
-						Réessayer
-					</button>
-				</div>
-			`;
-		}
-	}
 	
 	// Global function for opening product modal
 	(window as any).openProductModal = (productId) => {
@@ -217,6 +190,9 @@ import Footer from '../components/Footer.astro';
 		}
 	};
 
-	// Load menu data on page load
-	loadMenuData();
+	// Initialize on page load
+	document.addEventListener('DOMContentLoaded', () => {
+		renderCategoryFilters();
+		renderProducts();
+	});
 </script>
