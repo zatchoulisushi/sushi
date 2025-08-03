@@ -262,6 +262,14 @@ import { X, Plus, Minus } from 'lucide-astro';
 
   // Global function to open product modal
   (window as any).openProductModal = openProductModal;
+
+  // Auto-inject modal into page
+  if (typeof window !== 'undefined' && !document.getElementById('product-modal-container')) {
+    const container = document.createElement('div');
+    container.id = 'product-modal-container';
+    container.innerHTML = document.currentScript?.parentElement?.outerHTML || '';
+    document.body.appendChild(container);
+  }
 </script>
 
 <style>

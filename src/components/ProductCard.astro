@@ -1,0 +1,97 @@
+---
+import { Plus, Star } from 'lucide-astro';
+
+interface Props {
+	product: {
+		id: string;
+		name: string;
+		description: string;
+		base_price: number;
+		image_url: string;
+		category_id: string;
+		is_popular: boolean;
+		allergens?: string[];
+		variants?: any[];
+	};
+}
+
+const { product } = Astro.props;
+---
+
+<div class={`product-card group relative bg-white/5 backdrop-blur-sm rounded-2xl overflow-hidden hover:bg-white/10 transition-all duration-500 hover:scale-105 hover:shadow-2xl ${product.is_popular ? 'ring-2 ring-primary-600/50' : ''}`} 
+	 data-category={product.category_id}>
+	
+	{product.is_popular && (
+		<div class="absolute top-4 left-4 z-10 bg-primary-600 text-white px-3 py-1 rounded-full text-sm font-medium flex items-center gap-1">
+			<Star size={14} fill="currentColor" />
+			Populaire
+		</div>
+	)}
+	
+	<div class="aspect-video overflow-hidden">
+		<img 
+			src={product.image_url} 
+			alt={product.name}
+			class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+			loading="lazy"
+		/>
+	</div>
+	
+	<div class="p-6">
+		<h3 class="text-xl font-semibold mb-2 text-white group-hover:text-primary-400 transition-colors">
+			{product.name}
+		</h3>
+		<p class="text-white/70 text-sm mb-4 leading-relaxed">
+			{product.description}
+		</p>
+		
+		{product.allergens && product.allergens.length > 0 && (
+			<div class="mb-4">
+				<div class="flex flex-wrap gap-1">
+					{product.allergens.map(allergen => (
+						<span class="px-2 py-1 bg-yellow-600/20 text-yellow-400 text-xs rounded-full">{allergen}</span>
+					))}
+				</div>
+			</div>
+		)}
+		
+		<div class="flex items-center justify-between">
+			<span class="text-2xl font-bold text-primary-500">
+				{product.base_price.toFixed(2)}€
+			</span>
+			
+			<button class="add-to-cart-btn relative overflow-hidden bg-primary-600 hover:bg-primary-700 text-white p-3 rounded-full transition-all duration-300 hover:scale-110 hover:shadow-lg" 
+					onclick={`openProductModal('${product.id}')`}>
+				<Plus size={20} />
+				<div class="absolute inset-0 bg-white/20 transform scale-0 transition-transform duration-300 rounded-full"></div>
+			</button>
+		</div>
+	</div>
+	
+	<!-- Hover overlay -->
+	<div class="absolute inset-0 bg-gradient-to-t from-primary-900/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+</div>
+
+<style>
+	.add-to-cart-btn:hover .absolute {
+		transform: scale(1);
+	}
+	
+	.product-card {
+		transform-origin: center;
+	}
+	
+	.product-card::before {
+		content: '';
+		position: absolute;
+		inset: 0;
+		background: linear-gradient(45deg, transparent, rgba(220, 38, 38, 0.1), transparent);
+		opacity: 0;
+		transition: opacity 0.3s ease;
+		pointer-events: none;
+	}
+	
+	.product-card:hover::before {
+		opacity: 1;
+	}
+</style>

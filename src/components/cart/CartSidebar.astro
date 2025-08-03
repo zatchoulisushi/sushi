@@ -177,6 +177,14 @@ import { X, Plus, Minus, Trash2 } from 'lucide-astro';
 
   // Initial load
   updateCartDisplay();
+
+  // Auto-inject sidebar into page
+  if (typeof window !== 'undefined' && !document.getElementById('cart-sidebar-container')) {
+    const container = document.createElement('div');
+    container.id = 'cart-sidebar-container';
+    container.innerHTML = document.currentScript?.parentElement?.outerHTML || '';
+    document.body.appendChild(container);
+  }
 </script>
 
 <style>

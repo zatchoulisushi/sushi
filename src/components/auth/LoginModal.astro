@@ -208,5 +208,13 @@ import { X, Mail, Lock, User, Phone } from 'lucide-astro';
     modal?.classList.remove('hidden');
     modal?.classList.add('flex');
   };
+
+  // Auto-inject modal into page
+  if (typeof window !== 'undefined' && !document.getElementById('auth-modal-container')) {
+    const container = document.createElement('div');
+    container.id = 'auth-modal-container';
+    container.innerHTML = document.currentScript?.parentElement?.outerHTML || '';
+    document.body.appendChild(container);
+  }
 </script>
 </div>

@@ -23,20 +23,7 @@
 		</div>
 		<slot />
 		
-		<!-- Auth Modal -->
-		<div id="auth-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
-			<!-- Auth modal content will be loaded here -->
-		</div>
-		
-		<!-- Cart Sidebar -->
-		<div id="cart-sidebar" class="fixed right-0 top-0 h-full w-96 bg-dark-900 border-l border-white/10 transform translate-x-full transition-transform duration-300 z-50 flex flex-col">
-			<!-- Cart sidebar content will be loaded here -->
-		</div>
-		
-		<!-- Product Modal -->
-		<div id="product-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
-			<!-- Product modal content will be loaded here -->
-		</div>
+		<!-- Modals and Sidebars will be loaded dynamically -->
 		
 		<style>
 			#cursor {
@@ -104,45 +91,23 @@
 				document.querySelectorAll('.scroll-reveal').forEach(el => {
 					observer.observe(el);
 				});
-				
-				// Load auth modal
-				loadAuthModal();
-				// Load cart sidebar
-				loadCartSidebar();
-				// Load product modal
-				loadProductModal();
+			});
+		</script>
+		
+		<!-- Include modals and sidebars -->
+		<script>
+			// Dynamically load and inject modals
+			import('../components/auth/LoginModal.astro').then(module => {
+				// Auth modal will be handled by the component itself
 			});
 			
-			// Load modals and sidebars
-			async function loadAuthModal() {
-				try {
-					const response = await fetch('/components/auth/LoginModal.astro');
-					const html = await response.text();
-					document.getElementById('auth-modal').innerHTML = html;
-				} catch (error) {
-					console.error('Error loading auth modal:', error);
-				}
-			}
+			import('../components/cart/CartSidebar.astro').then(module => {
+				// Cart sidebar will be handled by the component itself
+			});
 			
-			async function loadCartSidebar() {
-				try {
-					const response = await fetch('/components/cart/CartSidebar.astro');
-					const html = await response.text();
-					document.getElementById('cart-sidebar').innerHTML = html;
-				} catch (error) {
-					console.error('Error loading cart sidebar:', error);
-				}
-			}
-			
-			async function loadProductModal() {
-				try {
-					const response = await fetch('/components/products/ProductModal.astro');
-					const html = await response.text();
-					document.getElementById('product-modal').innerHTML = html;
-				} catch (error) {
-					console.error('Error loading product modal:', error);
-				}
-			}
+			import('../components/products/ProductModal.astro').then(module => {
+				// Product modal will be handled by the component itself
+			});
 		</script>
 	</body>
 </html>
