@@ -1,6 +1,29 @@
 ---
 import AdminLayout from '../../components/admin/AdminLayout.astro';
 import { TrendingUp, Users, Package, DollarSign } from 'lucide-astro';
+import { ContentOrderService } from '../../lib/content-orders';
+import { ContentAuthService } from '../../lib/content-auth';
+
+// Load dashboard data at build time
+const allOrders = await ContentOrderService.getAllOrders();
+const allUsers = await ContentAuthService.getAllUsers();
+
+// Calculate stats at build time
+const totalRevenue = allOrders.reduce((sum, order) => sum + order.total_amount, 0);
+const totalOrders = allOrders.length;
+const totalCustomers = allUsers.length;
+const avgOrderValue = totalOrders > 0 ? totalRevenue / totalOrders : 0;
+
+// Get recent orders (last 5)
+const recentOrders = allOrders.slice(0, 5);
+
+// Calculate monthly growth (mock data for demo)
+const monthlyGrowth = {
+  revenue: 12,
+  orders: 8,
+  customers: 15,
+  avgOrder: 5
+};
 ---
 
 <AdminLayout title="Tableau de bord" activeSection="dashboard">
@@ -12,8 +35,8 @@ import { TrendingUp, Users, Package, DollarSign } from 'lucide-astro';
       </div>
       <div>
         <p class="text-white/60 text-sm">Chiffre d'affaires</p>
-        <p class="text-2xl font-bold text-white" id="revenue-stat">0€</p>
-        <p class="text-green-400 text-sm">+12% ce mois</p>
+        <p class="text-2xl font-bold text-white">{totalRevenue.toFixed(2)}€</p>
+        <p class="text-green-400 text-sm">+{monthlyGrowth.revenue}% ce mois</p>
       </div>
     </div>
 
@@ -23,8 +46,8 @@ import { TrendingUp, Users, Package, DollarSign } from 'lucide-astro';
       </div>
       <div>
         <p class="text-white/60 text-sm">Commandes</p>
-        <p class="text-2xl font-bold text-white" id="orders-stat">0</p>
-        <p class="text-blue-400 text-sm">+8% ce mois</p>
+        <p class="text-2xl font-bold text-white">{totalOrders}</p>
+        <p class="text-blue-400 text-sm">+{monthlyGrowth.orders}% ce mois</p>
       </div>
     </div>
 
@@ -34,8 +57,8 @@ import { TrendingUp, Users, Package, DollarSign } from 'lucide-astro';
       </div>
       <div>
         <p class="text-white/60 text-sm">Clients</p>
-        <p class="text-2xl font-bold text-white" id="customers-stat">0</p>
-        <p class="text-purple-400 text-sm">+15% ce mois</p>
+        <p class="text-2xl font-bold text-white">{totalCustomers}</p>
+        <p class="text-purple-400 text-sm">+{monthlyGrowth.customers}% ce mois</p>
       </div>
     </div>
 
@@ -45,8 +68,8 @@ import { TrendingUp, Users, Package, DollarSign } from 'lucide-astro';
       </div>
       <div>
         <p class="text-white/60 text-sm">Panier moyen</p>
-        <p class="text-2xl font-bold text-white" id="avg-order-stat">0€</p>
-        <p class="text-orange-400 text-sm">+5% ce mois</p>
+        <p class="text-2xl font-bold text-white">{avgOrderValue.toFixed(2)}€</p>
+        <p class="text-orange-400 text-sm">+{monthlyGrowth.avgOrder}% ce mois</p>
       </div>
     </div>
   </div>
@@ -55,16 +78,56 @@ import { TrendingUp, Users, Package, DollarSign } from 'lucide-astro';
   <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
     <div class="admin-card">
       <h2 class="text-xl font-bold mb-6">Commandes récentes</h2>
-      <div id="recent-orders" class="space-y-4">
-        <!-- Orders will be loaded here -->
+      <div class="space-y-4">
+        {recentOrders.length > 0 ? recentOrders.map(order => (
+          <div class="order-item">
+            <div class="flex items-center justify-between mb-2">
+              <div>
+                <h4 class="font-semibold text-white">#{order.order_number}</h4>
+                <p class="text-sm text-white/60">{new Date(order.created_at).toLocaleDateString('fr-FR')}</p>
+              </div>
+              <div class="text-right">
+                <p class="font-bold text-green-400">{order.total_amount.toFixed(2)}€</p>
+                <span class={`px-2 py-1 text-xs rounded-full ${
+                  order.status === 'pending' ? 'bg-yellow-600/20 text-yellow-400' :
+                  order.status === 'confirmed' ? 'bg-blue-600/20 text-blue-400' :
+                  order.status === 'preparing' ? 'bg-orange-600/20 text-orange-400' :
+                  order.status === 'ready' ? 'bg-green-600/20 text-green-400' :
+                  order.status === 'delivered' ? 'bg-green-600/20 text-green-400' :
+                  'bg-red-600/20 text-red-400'
+                }`}>
+                  {order.status === 'pending' ? 'En attente' :
+                   order.status === 'confirmed' ? 'Confirmée' :
+                   order.status === 'preparing' ? 'En préparation' :
+                   order.status === 'ready' ? 'Prête' :
+                   order.status === 'delivered' ? 'Livrée' :
+                   'Annulée'}
+                </span>
+              </div>
+            </div>
+            
+            <div class="text-sm text-white/70">
+              {order.items?.slice(0, 2).map(item => `${item.quantity}x ${item.product.name}`).join(', ')}
+              {order.items?.length > 2 ? ` et ${order.items.length - 2} autre(s)` : ''}
+            </div>
+          </div>
+        )) : (
+          <div class="text-center py-8 text-white/60">
+            <Package size={48} class="mx-auto mb-4 opacity-50" />
+            <p>Aucune commande récente</p>
+          </div>
+        )}
       </div>
     </div>
 
     <!-- Popular Products -->
     <div class="admin-card">
       <h2 class="text-xl font-bold mb-6">Produits populaires</h2>
-      <div id="popular-products" class="space-y-4">
-        <!-- Products will be loaded here -->
+      <div class="space-y-4">
+        <div class="text-center py-8 text-white/60">
+          <TrendingUp size={48} class="mx-auto mb-4 opacity-50" />
+          <p>Statistiques des produits disponibles avec de vraies données</p>
+        </div>
       </div>
     </div>
   </div>
@@ -82,97 +145,8 @@ import { TrendingUp, Users, Package, DollarSign } from 'lucide-astro';
   .admin-card {
     @apply p-6 bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10;
   }
+
+  .order-item {
+    @apply p-4 bg-white/5 rounded-xl border border-white/10;
+  }
 </style>
-
-<script>
-  import { supabase } from '../../lib/supabase';
-
-  async function loadDashboardData() {
-    try {
-      // Load recent orders
-      const { data: orders } = await supabase
-        .from('orders')
-        .select(`
-          *,
-          items:order_items(
-            *,
-            product:products(name, image_url)
-          )
-        `)
-        .order('created_at', { ascending: false })
-        .limit(5);
-
-      // Load stats
-      const { data: stats } = await supabase
-        .from('orders')
-        .select('total_amount, created_at')
-        .gte('created_at', new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString());
-
-      if (orders) {
-        displayRecentOrders(orders);
-      }
-
-      if (stats) {
-        displayStats(stats);
-      }
-
-    } catch (error) {
-      console.error('Error loading dashboard data:', error);
-    }
-  }
-
-  function displayRecentOrders(orders) {
-    const container = document.getElementById('recent-orders');
-    if (!container) return;
-
-    container.innerHTML = orders.map(order => `
-      <div class="flex items-center justify-between p-4 bg-white/5 rounded-xl">
-        <div>
-          <p class="font-semibold text-white">#${order.order_number}</p>
-          <p class="text-sm text-white/60">${new Date(order.created_at).toLocaleDateString('fr-FR')}</p>
-        </div>
-        <div class="text-right">
-          <p class="font-bold text-primary-500">${order.total_amount.toFixed(2)}€</p>
-          <span class="px-2 py-1 text-xs rounded-full ${getStatusColor(order.status)}">${getStatusText(order.status)}</span>
-        </div>
-      </div>
-    `).join('');
-  }
-
-  function displayStats(orders) {
-    const totalRevenue = orders.reduce((sum, order) => sum + order.total_amount, 0);
-    const avgOrder = orders.length > 0 ? totalRevenue / orders.length : 0;
-
-    document.getElementById('revenue-stat').textContent = `${totalRevenue.toFixed(0)}€`;
-    document.getElementById('orders-stat').textContent = orders.length.toString();
-    document.getElementById('avg-order-stat').textContent = `${avgOrder.toFixed(2)}€`;
-  }
-
-  function getStatusColor(status) {
-    const colors = {
-      pending: 'bg-yellow-600/20 text-yellow-400',
-      confirmed: 'bg-blue-600/20 text-blue-400',
-      preparing: 'bg-orange-600/20 text-orange-400',
-      ready: 'bg-green-600/20 text-green-400',
-      delivered: 'bg-green-600/20 text-green-400',
-      cancelled: 'bg-red-600/20 text-red-400'
-    };
-    return colors[status] || colors.pending;
-  }
-
-  function getStatusText(status) {
-    const texts = {
-      pending: 'En attente',
-      confirmed: 'Confirmée',
-      preparing: 'En préparation',
-      ready: 'Prête',
-      delivered: 'Livrée',
-      cancelled: 'Annulée'
-    };
-    return texts[status] || status;
-  }
-
-  // Load data on page load
-  loadDashboardData();
-</script>
-</div>
