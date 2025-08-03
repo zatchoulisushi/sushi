@@ -18,7 +18,7 @@ import { X, Plus, Minus } from 'lucide-astro';
 
 <script>
   import { CartService } from '../../lib/cart';
-  import { ProductService } from '../../lib/products';
+  import { ClientContentService } from '../../lib/client-content';
 
   const modal = document.getElementById('product-modal');
   const closeBtn = document.getElementById('close-product-modal');
@@ -38,9 +38,17 @@ import { X, Plus, Minus } from 'lucide-astro';
 
   async function openProductModal(productId) {
     try {
-      const product = await ProductService.getProduct(productId);
+      const product = ClientContentService.getProduct(productId);
+      if (!product) {
+        console.error('Product not found:', productId);
+        alert('Produit introuvable');
+        return;
+      }
+
       currentProduct = product;
-      selectedVariant = product.variants.find(v => v.is_default) || product.variants[0] || null;
+      // Note: For now, we don't have variants in our content layer
+      // This can be extended later if needed
+      selectedVariant = null;
       
       renderProductModal(product);
       
@@ -55,54 +63,28 @@ import { X, Plus, Minus } from 'lucide-astro';
   function renderProductModal(product) {
     if (!modalContent) return;
 
-    const currentPrice = selectedVariant 
-      ? product.base_price + selectedVariant.price_modifier 
-      : product.base_price;
+    const currentPrice = product.data.base_price;
 
     modalContent.innerHTML = `
       <div class="aspect-video overflow-hidden rounded-t-2xl">
-        <img src="${product.image_url}" alt="${product.name}" class="w-full h-full object-cover">
+        <img src="${product.data.image_url}" alt="${product.data.name}" class="w-full h-full object-cover">
       </div>
       
       <div class="p-8">
         <div class="flex items-start justify-between mb-4">
           <div>
-            <h2 class="text-2xl font-bold text-white mb-2">${product.name}</h2>
-            <p class="text-white/70 leading-relaxed">${product.description}</p>
+            <h2 class="text-2xl font-bold text-white mb-2">${product.data.name}</h2>
+            <p class="text-white/70 leading-relaxed">${product.data.description}</p>
           </div>
-          ${product.is_popular ? '<div class="bg-primary-600 text-white px-3 py-1 rounded-full text-sm font-medium">Populaire</div>' : ''}
+          ${product.data.is_popular ? '<div class="bg-primary-600 text-white px-3 py-1 rounded-full text-sm font-medium">Populaire</div>' : ''}
         </div>
 
-        ${product.allergens && product.allergens.length > 0 ? `
+        ${product.data.allergens && product.data.allergens.length > 0 ? `
           <div class="mb-6">
             <h4 class="text-sm font-medium text-white/80 mb-2">Allergènes:</h4>
             <div class="flex flex-wrap gap-2">
-              ${product.allergens.map(allergen => `
+              ${product.data.allergens.map(allergen => `
                 <span class="px-2 py-1 bg-yellow-600/20 text-yellow-400 text-xs rounded-full">${allergen}</span>
-              `).join('')}
-            </div>
-          </div>
-        ` : ''}
-
-        ${product.variants && product.variants.length > 0 ? `
-          <div class="mb-6">
-            <h4 class="text-sm font-medium text-white/80 mb-3">Options:</h4>
-            <div class="grid grid-cols-1 gap-2">
-              ${product.variants.map(variant => `
-                <label class="variant-option flex items-center justify-between p-3 bg-white/5 rounded-xl border border-white/10 cursor-pointer hover:bg-white/10 transition-colors ${selectedVariant?.id === variant.id ? 'border-primary-600 bg-primary-600/10' : ''}">
-                  <div class="flex items-center">
-                    <input type="radio" name="variant" value="${variant.id}" class="sr-only" ${selectedVariant?.id === variant.id ? 'checked' : ''}>
-                    <div class="flex items-center">
-                      <div class="w-4 h-4 border-2 border-white/30 rounded-full mr-3 flex items-center justify-center ${selectedVariant?.id === variant.id ? 'border-primary-600' : ''}">
-                        ${selectedVariant?.id === variant.id ? '<div class="w-2 h-2 bg-primary-600 rounded-full"></div>' : ''}
-                      </div>
-                      <span class="text-white">${variant.name}</span>
-                    </div>
-                  </div>
-                  <span class="text-primary-500 font-semibold">
-                    ${variant.price_modifier > 0 ? '+' : ''}${variant.price_modifier.toFixed(2)}€
-                  </span>
-                </label>
               `).join('')}
             </div>
           </div>
@@ -153,29 +135,6 @@ import { X, Plus, Minus } from 'lucide-astro';
   }
 
   function setupModalEventListeners() {
-    // Variant selection
-    document.querySelectorAll('input[name="variant"]').forEach(input => {
-      input.addEventListener('change', (e) => {
-        const variantId = e.target.value;
-        selectedVariant = currentProduct.variants.find(v => v.id === variantId);
-        updatePrice();
-        
-        // Update visual selection
-        document.querySelectorAll('.variant-option').forEach(option => {
-          option.classList.remove('border-primary-600', 'bg-primary-600/10');
-          option.classList.add('border-white/10');
-          const radio = option.querySelector('.w-4.h-4 div');
-          if (radio) radio.remove();
-        });
-        
-        const selectedOption = e.target.closest('.variant-option');
-        selectedOption.classList.add('border-primary-600', 'bg-primary-600/10');
-        selectedOption.classList.remove('border-white/10');
-        const radioIndicator = selectedOption.querySelector('.w-4.h-4');
-        radioIndicator.innerHTML = '<div class="w-2 h-2 bg-primary-600 rounded-full"></div>';
-      });
-    });
-
     // Quantity controls
     document.getElementById('decrease-quantity')?.addEventListener('click', () => {
       if (quantity > 1) {
@@ -205,7 +164,7 @@ import { X, Plus, Minus } from 'lucide-astro';
       );
 
       // Show success feedback
-      showAddToCartFeedback(currentProduct.name, quantity);
+      showAddToCartFeedback(currentProduct.data.name, quantity);
       closeModal();
     });
   }
@@ -220,9 +179,7 @@ import { X, Plus, Minus } from 'lucide-astro';
   function updatePrice() {
     if (!currentProduct) return;
 
-    const currentPrice = selectedVariant 
-      ? currentProduct.base_price + selectedVariant.price_modifier 
-      : currentProduct.base_price;
+    const currentPrice = currentProduct.data.base_price;
 
     const totalPriceElement = document.getElementById('total-price');
     if (totalPriceElement) {

@@ -1,0 +1,12 @@
+{
+  "category_id": "sashimis",
+  "name": "Sashimi Saumon",
+  "description": "6 tranches de saumon frais sans riz",
+  "base_price": 12.00,
+  "image_url": "https://images.pexels.com/photos/2232433/pexels-photo-2232433.jpeg",
+  "is_popular": false,
+  "is_available": true,
+  "allergens": ["poisson"],
+  "preparation_time": 3,
+  "sort_order": 1
+}

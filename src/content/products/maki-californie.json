@@ -1,0 +1,12 @@
+{
+  "category_id": "makis",
+  "name": "Maki Californie",
+  "description": "Rouleau inversé avec avocat, concombre et surimi",
+  "base_price": 6.50,
+  "image_url": "https://images.pexels.com/photos/8951343/pexels-photo-8951343.jpeg",
+  "is_popular": true,
+  "is_available": true,
+  "allergens": ["poisson", "crustacés"],
+  "preparation_time": 10,
+  "sort_order": 1
+}

@@ -1,0 +1,12 @@
+{
+  "category_id": "sushis",
+  "name": "Sushi Thon",
+  "description": "Sushi au thon rouge de qualité supérieure",
+  "base_price": 4.00,
+  "image_url": "https://images.pexels.com/photos/6540920/pexels-photo-6540920.jpeg",
+  "is_popular": true,
+  "is_available": true,
+  "allergens": ["poisson"],
+  "preparation_time": 5,
+  "sort_order": 2
+}

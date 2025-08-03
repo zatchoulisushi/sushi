@@ -1,0 +1,12 @@
+{
+  "category_id": "sushis",
+  "name": "Sushi Saumon",
+  "description": "Sushi traditionnel au saumon frais, sur riz vinaigré",
+  "base_price": 3.50,
+  "image_url": "https://images.pexels.com/photos/357756/pexels-photo-357756.jpeg",
+  "is_popular": true,
+  "is_available": true,
+  "allergens": ["poisson"],
+  "preparation_time": 5,
+  "sort_order": 1
+}

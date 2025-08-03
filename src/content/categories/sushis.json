@@ -1,0 +1,7 @@
+{
+  "name": "Sushis",
+  "description": "Nos sushis traditionnels préparés avec les poissons les plus frais",
+  "image_url": "https://images.pexels.com/photos/357756/pexels-photo-357756.jpeg",
+  "sort_order": 1,
+  "is_active": true
+}

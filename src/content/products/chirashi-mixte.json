@@ -1,0 +1,12 @@
+{
+  "category_id": "chirashis",
+  "name": "Chirashi Mixte",
+  "description": "Bol de riz avec assortiment de sashimis et légumes",
+  "base_price": 16.50,
+  "image_url": "https://images.pexels.com/photos/4518647/pexels-photo-4518647.jpeg",
+  "is_popular": true,
+  "is_available": true,
+  "allergens": ["poisson"],
+  "preparation_time": 15,
+  "sort_order": 1
+}
