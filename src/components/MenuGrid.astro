@@ -99,12 +99,8 @@ const products = await ContentService.getProducts();
 </section>
 
 <!-- Hidden data containers for client-side access -->
-<script type="application/json" id="products-data">
-	{JSON.stringify(products)}
-</script>
-<script type="application/json" id="categories-data">
-	{JSON.stringify(categories)}
-</script>
+<script type="application/json" id="products-data" set:html={JSON.stringify(products)}></script>
+<script type="application/json" id="categories-data" set:html={JSON.stringify(categories)}></script>
 
 <style>
 	.filter-btn {
